@@ -2,18 +2,19 @@ import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { StockCard } from '@/components/StockCard';
 import { StockChart } from '@/components/StockChart';
+import { Sidebar } from '@/components/Sidebar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Button from '@/components/ui/button';
 import { mockStockData, generateChartData } from '@/utils/mockData';
 import { useStockData, useChartData } from '@/hooks/useStockData';
 import type { ChartData } from '@/types/stock';
-import { RefreshCw, TrendingUp, DollarSign, Activity, AlertCircle } from 'lucide-react';
+import { RefreshCw, TrendingUp, DollarSign, Activity, Menu } from 'lucide-react';
 
 export const Dashboard = () => {
-  const [localChartData, setLocalChartData] = useState<ChartData[]>([]);
-  const [isLocalLoading, setIsLocalLoading] = useState(false);
-  
-  // Use the new HTTP client hooks (with fallback to mock data)
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const { stocks, loading: stocksLoading, error: stocksError, refetch: refetchStocks } = useStockData();
   const { chartData: apiChartData, loading: chartLoading, error: chartError, refetch: refetchChart } = useChartData('AAPL', '1M');
 
@@ -52,41 +53,38 @@ export const Dashboard = () => {
   const isLoading = stocksLoading || chartLoading || isLocalLoading;
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <main className="container mx-auto px-4 py-8">
-        {/* Dashboard Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-            <p className="text-muted-foreground">
-              Monitor your investments and market trends
-            </p>
-            {/* Data source indicator */}
-            <div className="flex items-center gap-2 mt-2">
-              {isApiMode ? (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                  <Activity className="w-3 h-3 mr-1" />
-                  API Mode
-                </span>
-              ) : (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
-                  <AlertCircle className="w-3 h-3 mr-1" />
-                  Demo Mode (Mock Data)
-                </span>
-              )}
+    <div className="min-h-screen bg-background flex">
+      <div className="flex-1">
+        <Header />
+        
+        <main className="container mx-auto px-4 py-8">
+          {/* Dashboard Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+              <p className="text-muted-foreground">
+                Monitor your investments and market trends
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button 
+                onClick={handleRefresh} 
+                disabled={isLoading}
+                className="flex items-center space-x-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                <span>Refresh Data</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden"
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
             </div>
           </div>
-          <Button 
-            onClick={handleRefresh} 
-            disabled={isLoading}
-            className="flex items-center space-x-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            <span>Refresh Data</span>
-          </Button>
-        </div>
 
         {/* Error Display */}
         {(stocksError || chartError) && (
@@ -170,6 +168,13 @@ export const Dashboard = () => {
           </p>
         </footer>
       </main>
+      </div>
+      
+      {/* Sidebar */}
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)} 
+      />
     </div>
   );
 };
