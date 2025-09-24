@@ -2,15 +2,17 @@ import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { StockCard } from '@/components/StockCard';
 import { StockChart } from '@/components/StockChart';
+import { Sidebar } from '@/components/Sidebar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Button from '@/components/ui/button';
 import { mockStockData, generateChartData } from '@/utils/mockData';
 import type { ChartData } from '@/types/stock';
-import { RefreshCw, TrendingUp, DollarSign, Activity } from 'lucide-react';
+import { RefreshCw, TrendingUp, DollarSign, Activity, Menu } from 'lucide-react';
 
 export const Dashboard = () => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     setChartData(generateChartData(30));
@@ -29,27 +31,38 @@ export const Dashboard = () => {
   const averageChange = totalChange / mockStockData.length;
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <main className="container mx-auto px-4 py-8">
-        {/* Dashboard Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-            <p className="text-muted-foreground">
-              Monitor your investments and market trends
-            </p>
+    <div className="min-h-screen bg-background flex">
+      <div className="flex-1">
+        <Header />
+        
+        <main className="container mx-auto px-4 py-8">
+          {/* Dashboard Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+              <p className="text-muted-foreground">
+                Monitor your investments and market trends
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button 
+                onClick={handleRefresh} 
+                disabled={isLoading}
+                className="flex items-center space-x-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                <span>Refresh Data</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden"
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <Button 
-            onClick={handleRefresh} 
-            disabled={isLoading}
-            className="flex items-center space-x-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            <span>Refresh Data</span>
-          </Button>
-        </div>
 
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -119,6 +132,13 @@ export const Dashboard = () => {
           </p>
         </footer>
       </main>
+      </div>
+      
+      {/* Sidebar */}
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)} 
+      />
     </div>
   );
 };
