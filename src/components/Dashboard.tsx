@@ -5,28 +5,51 @@ import { StockChart } from '@/components/StockChart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Button from '@/components/ui/button';
 import { mockStockData, generateChartData } from '@/utils/mockData';
+import { useStockData, useChartData } from '@/hooks/useStockData';
 import type { ChartData } from '@/types/stock';
-import { RefreshCw, TrendingUp, DollarSign, Activity } from 'lucide-react';
+import { RefreshCw, TrendingUp, DollarSign, Activity, AlertCircle } from 'lucide-react';
 
 export const Dashboard = () => {
-  const [chartData, setChartData] = useState<ChartData[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [localChartData, setLocalChartData] = useState<ChartData[]>([]);
+  const [isLocalLoading, setIsLocalLoading] = useState(false);
+  
+  // Use the new HTTP client hooks (with fallback to mock data)
+  const { stocks, loading: stocksLoading, error: stocksError, refetch: refetchStocks } = useStockData();
+  const { chartData: apiChartData, loading: chartLoading, error: chartError, refetch: refetchChart } = useChartData('AAPL', '1M');
 
+  // Use API data if available, otherwise fallback to mock data
+  const displayStocks = stocks.length > 0 ? stocks : mockStockData;
+  const displayChartData = apiChartData.length > 0 ? apiChartData : localChartData;
+  const isApiMode = stocks.length > 0 || apiChartData.length > 0;
+  
   useEffect(() => {
-    setChartData(generateChartData(30));
+    // Initialize local chart data as fallback
+    setLocalChartData(generateChartData(30));
   }, []);
 
   const handleRefresh = async () => {
-    setIsLoading(true);
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setChartData(generateChartData(30));
-    setIsLoading(false);
+    setIsLocalLoading(true);
+    
+    try {
+      if (isApiMode) {
+        // Refresh API data
+        await Promise.all([refetchStocks(), refetchChart()]);
+      } else {
+        // Simulate API call delay for mock data
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setLocalChartData(generateChartData(30));
+      }
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    } finally {
+      setIsLocalLoading(false);
+    }
   };
 
-  const totalValue = mockStockData.reduce((sum, stock) => sum + (stock.price * 100), 0);
-  const totalChange = mockStockData.reduce((sum, stock) => sum + stock.change, 0);
-  const averageChange = totalChange / mockStockData.length;
+  const totalValue = displayStocks.reduce((sum, stock) => sum + (stock.price * 100), 0);
+  const totalChange = displayStocks.reduce((sum, stock) => sum + stock.change, 0);
+  const averageChange = totalChange / displayStocks.length;
+  const isLoading = stocksLoading || chartLoading || isLocalLoading;
 
   return (
     <div className="min-h-screen bg-background">
@@ -40,6 +63,20 @@ export const Dashboard = () => {
             <p className="text-muted-foreground">
               Monitor your investments and market trends
             </p>
+            {/* Data source indicator */}
+            <div className="flex items-center gap-2 mt-2">
+              {isApiMode ? (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                  <Activity className="w-3 h-3 mr-1" />
+                  API Mode
+                </span>
+              ) : (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                  <AlertCircle className="w-3 h-3 mr-1" />
+                  Demo Mode (Mock Data)
+                </span>
+              )}
+            </div>
           </div>
           <Button 
             onClick={handleRefresh} 
@@ -50,6 +87,18 @@ export const Dashboard = () => {
             <span>Refresh Data</span>
           </Button>
         </div>
+
+        {/* Error Display */}
+        {(stocksError || chartError) && (
+          <div className="mb-6 p-4 border border-yellow-200 bg-yellow-50 rounded-lg">
+            <div className="flex items-center">
+              <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
+              <span className="text-yellow-800">
+                API unavailable, using mock data. Errors: {stocksError || chartError}
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -87,7 +136,7 @@ export const Dashboard = () => {
               <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{mockStockData.length}</div>
+              <div className="text-2xl font-bold">{displayStocks.length}</div>
               <p className="text-xs text-muted-foreground">
                 Currently tracking stocks
               </p>
@@ -98,15 +147,15 @@ export const Dashboard = () => {
         {/* Chart Section */}
         <div className="grid grid-cols-1 gap-6 mb-8">
           <StockChart 
-            data={chartData} 
-            title="Market Overview - 30 Days"
+            data={displayChartData} 
+            title={`Market Overview - 30 Days ${isApiMode ? '(Live Data)' : '(Demo Data)'}`}
             type="area"
           />
         </div>
 
         {/* Stock Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-          {mockStockData.map((stock) => (
+          {displayStocks.map((stock) => (
             <StockCard key={stock.symbol} stock={stock} />
           ))}
         </div>
@@ -114,8 +163,10 @@ export const Dashboard = () => {
         {/* Footer */}
         <footer className="mt-16 pt-8 border-t text-center text-sm text-muted-foreground">
           <p>
-            Stock data is simulated for demonstration purposes. 
-            Real-time data integration can be added through financial APIs.
+            {isApiMode 
+              ? 'Connected to API for real-time data. Mock data is used as fallback when API is unavailable.'
+              : 'Stock data is simulated for demonstration purposes. Real-time data integration can be added through financial APIs.'
+            }
           </p>
         </footer>
       </main>
