@@ -1,5 +1,4 @@
 import React from 'react';
-import { TanStackTableDemo } from './TanStackTableDemo';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -27,7 +26,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         <div className="flex flex-col h-full p-4">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">TanStack Demo</h2>
+            <h2 className="text-lg font-semibold">导航菜单</h2>
             <button
               onClick={onClose}
               className="lg:hidden p-1 rounded-md hover:bg-muted"
@@ -39,7 +38,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           
           {/* Content */}
           <div className="flex-1 overflow-hidden">
-            <TanStackTableDemo />
+            <div className="space-y-4">
+              <div className="p-4 border rounded-lg">
+                <h3 className="font-medium mb-2">功能菜单</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• 股票监控</li>
+                  <li>• 数据分析</li>
+                  <li>• 投资组合</li>
+                  <li>• 市场趋势</li>
+                </ul>
+              </div>
+              
+              <div className="p-4 border rounded-lg">
+                <h3 className="font-medium mb-2">快速操作</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• 刷新数据</li>
+                  <li>• 导出报告</li>
+                  <li>• 设置提醒</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>

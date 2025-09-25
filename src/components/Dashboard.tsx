@@ -2,25 +2,24 @@ import { useState, useEffect } from 'react'
 import { Header } from '@/components/Header'
 import { StockCard } from '@/components/StockCard'
 import { StockChart } from '@/components/StockChart'
-import { Sidebar } from '@/components/Sidebar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Button from '@/components/ui/button'
 import { mockStockData, generateChartData } from '@/utils/mockData'
 import { useStockData, useChartData } from '@/hooks/useStockData'
+import { useSidebar } from '@/contexts/SidebarContext'
 import type { ChartData } from '@/types/stock'
 import {
   RefreshCw,
   TrendingUp,
   DollarSign,
   Activity,
-  Menu,
   AlertCircle,
 } from 'lucide-react'
 
 export const Dashboard = () => {
   const [localChartData, setLocalChartData] = useState<ChartData[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const { isCollapsed } = useSidebar()
 
   const {
     stocks,
@@ -77,10 +76,11 @@ export const Dashboard = () => {
   const loading = stocksLoading || chartLoading || isLoading
 
   return (
-    <div className="min-h-screen bg-background flex">
-      <div className="flex-1">
-        <Header />
-
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      {/* Main content with dynamic left margin for sidebar */}
+      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         <main className="container mx-auto px-4 py-8">
           {/* Dashboard Header */}
           <div className="flex items-center justify-between mb-8">
@@ -100,14 +100,6 @@ export const Dashboard = () => {
                   className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`}
                 />
                 <span>Refresh Data</span>
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden"
-              >
-                <Menu className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -210,9 +202,6 @@ export const Dashboard = () => {
           </footer>
         </main>
       </div>
-
-      {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
     </div>
   )
 }
