@@ -202,28 +202,93 @@ export const useRealtimeStock = (symbol: string) => {
 };
 ```
 
-### 2. State Management (Future)
+### 2. State Management (✅ Implemented with Zustand)
 
 ```tsx
-// Context-based state management
-interface AppState {
-  portfolio: StockData[];
-  watchlist: string[];
-  theme: 'light' | 'dark';
-}
+// Zustand-based state management with TypeScript
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
-const AppContext = createContext<AppState | null>(null);
+// UI Store for application-wide UI state
+export const useUIStore = create<UIStore>()(
+  devtools(
+    persist(
+      (set) => ({
+        isSidebarCollapsed: false,
+        theme: 'system',
+        toggleSidebar: () => set((state) => ({ 
+          isSidebarCollapsed: !state.isSidebarCollapsed 
+        })),
+        setTheme: (theme) => set({ theme }),
+      }),
+      { name: 'stock-web-ui-store' }
+    ),
+    { name: 'UIStore' }
+  )
+);
 
-// Or Redux Toolkit for complex state
-import { configureStore } from '@reduxjs/toolkit';
+// Stock Data Store with caching
+export const useStockStore = create<StockStore>()(
+  devtools((set) => ({
+    stocks: [],
+    stockCache: {},
+    chartDataCache: {},
+    quotesCache: {},
+    setStocks: (stocks) => set({ stocks }),
+    setStockInCache: (symbol, stock) => set((state) => ({
+      stockCache: { ...state.stockCache, [symbol]: stock }
+    })),
+    // ... more actions
+  }))
+);
 
-const store = configureStore({
-  reducer: {
-    stocks: stocksSlice.reducer,
-    portfolio: portfolioSlice.reducer,
-  },
-});
+// User Preferences Store
+export const useUserStore = create<UserStore>()(
+  devtools(
+    persist(
+      (set) => ({
+        watchlist: [],
+        portfolio: [],
+        settings: { refreshInterval: 30000 },
+        addToWatchlist: (symbol) => set((state) => ({
+          watchlist: [...state.watchlist, symbol]
+        })),
+        // ... more actions
+      }),
+      { name: 'stock-web-user-store' }
+    )
+  )
+);
+
+// Enhanced hooks that integrate Zustand with React patterns
+export const useStockDataWithStore = () => {
+  const { stocks, setStocks, setStocksLoading } = useStocksData();
+  
+  const fetchStocks = useCallback(async () => {
+    setStocksLoading(true);
+    const data = await stockApi.getStocks();
+    setStocks(data);
+    setStocksLoading(false);
+  }, [setStocks, setStocksLoading]);
+  
+  return { stocks, refetch: fetchStocks };
+};
 ```
+
+**Key Features:**
+- **Multi-domain stores**: UI, Stock Data, User Preferences
+- **TypeScript integration**: Full type safety with interfaces
+- **Persistence**: Critical data saved to localStorage
+- **DevTools support**: Redux DevTools integration
+- **Caching strategy**: Automatic API response caching
+- **Performance optimization**: Selective subscriptions
+- **Backward compatibility**: Existing components work unchanged
+
+**Global vs Local State Guidelines:**
+- **Global (Zustand)**: User preferences, cached API data, cross-component UI state
+- **Local (useState)**: Form inputs, component-specific UI, temporary states
+
+See [ZUSTAND_INTEGRATION.md](./ZUSTAND_INTEGRATION.md) for detailed implementation guide.
 
 ## 🧪 Testing Strategy
 
