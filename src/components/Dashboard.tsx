@@ -5,8 +5,8 @@ import { StockChart } from '@/components/StockChart'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Button from '@/components/ui/button'
 import { mockStockData, generateChartData } from '@/utils/mockData'
-import { useStockData, useChartData } from '@/hooks/useStockData'
-import { useSidebar } from '@/contexts/SidebarContext'
+import { useStockDataWithStore, useChartDataWithStore } from '@/hooks/useStockDataWithStore'
+import { useSidebarZustand } from '@/contexts/SidebarContextZustand'
 import type { ChartData } from '@/types/stock'
 import {
   RefreshCw,
@@ -19,20 +19,20 @@ import {
 export const Dashboard = () => {
   const [localChartData, setLocalChartData] = useState<ChartData[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const { isCollapsed } = useSidebar()
+  const { isCollapsed } = useSidebarZustand()
 
   const {
     stocks,
     loading: stocksLoading,
     error: stocksError,
     refetch: refetchStocks,
-  } = useStockData()
+  } = useStockDataWithStore()
   const {
     chartData: apiChartData,
     loading: chartLoading,
     error: chartError,
     refetch: refetchChart,
-  } = useChartData('AAPL', '1M')
+  } = useChartDataWithStore('AAPL', '1M')
 
   // Use API data if available, otherwise fallback to mock data
   const displayStocks = stocks.length > 0 ? stocks : mockStockData

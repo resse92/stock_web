@@ -1,14 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
 import Button from '@/components/ui/button';
-import { useSidebar } from '@/contexts/SidebarContext';
+import { useSidebarZustand } from '@/contexts/SidebarContextZustand';
 import { Home, BarChart3, User, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const Header = () => {
   const location = useLocation();
-  const { isCollapsed, toggleSidebar } = useSidebar();
+  const { isCollapsed, toggleSidebar } = useSidebarZustand();
   
   const navItems = [
     { path: '/', label: 'Dashboard', icon: Home },
+    { path: '/advanced', label: 'Advanced Dashboard', icon: BarChart3 },
     { path: '/tanstack', label: 'TanStack Demo', icon: BarChart3 },
     { path: '/portfolio', label: 'Portfolio', icon: User },
     { path: '/settings', label: 'Settings', icon: Settings },
