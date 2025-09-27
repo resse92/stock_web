@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import { shallow } from 'zustand/shallow';
 import type { UIState, UIActions } from '@/types/store';
 
 // Initial UI state
@@ -122,20 +123,20 @@ export const useSidebarState = () => useUIStore((state) => ({
   isCollapsed: state.isSidebarCollapsed,
   toggleSidebar: state.toggleSidebar,
   setCollapsed: state.setSidebarCollapsed,
-}));
+}), shallow);
 
 export const useThemeState = () => useUIStore((state) => ({
   theme: state.theme,
   setTheme: state.setTheme,
-}));
+}), shallow);
 
 export const useLoadingState = () => useUIStore((state) => ({
   isLoading: state.isLoading,
   setLoading: state.setLoading,
-}));
+}), shallow);
 
 export const useModalState = () => useUIStore((state) => ({
   modals: state.modals,
   openModal: state.openModal,
   closeModal: state.closeModal,
-}));
+}), shallow);

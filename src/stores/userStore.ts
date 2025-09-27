@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import { shallow } from 'zustand/shallow';
 import type { UserState, UserActions } from '@/types/store';
 
 // Initial user state
@@ -192,27 +193,27 @@ export const useWatchlist = () => useUserStore((state) => ({
   addToWatchlist: state.addToWatchlist,
   removeFromWatchlist: state.removeFromWatchlist,
   setWatchlist: state.setWatchlist,
-}));
+}), shallow);
 
 export const usePortfolio = () => useUserStore((state) => ({
   portfolio: state.portfolio,
   addToPortfolio: state.addToPortfolio,
   updatePortfolioPosition: state.updatePortfolioPosition,
   removeFromPortfolio: state.removeFromPortfolio,
-}));
+}), shallow);
 
 export const useUserSettings = () => useUserStore((state) => ({
   settings: state.settings,
   updateSettings: state.updateSettings,
-}));
+}), shallow);
 
 export const useViewPreferences = () => useUserStore((state) => ({
   viewPreferences: state.viewPreferences,
   updateViewPreferences: state.updateViewPreferences,
-}));
+}), shallow);
 
 export const useFavorites = () => useUserStore((state) => ({
   favoriteSymbols: state.settings.favoriteSymbols,
   addToFavorites: state.addToFavorites,
   removeFromFavorites: state.removeFromFavorites,
-}));
+}), shallow);

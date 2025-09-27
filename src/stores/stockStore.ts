@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { shallow } from 'zustand/shallow';
 import type { StockState, StockActions } from '@/types/store';
 import type { StockData, ChartData, StockQuote } from '@/types/stock';
 
@@ -354,38 +355,46 @@ export const useStockStore = create<StockStore>()(
 );
 
 // Selector hooks for better performance
-export const useStocksData = () => useStockStore((state) => ({
-  stocks: state.stocks,
-  loading: state.loading.stocks,
-  error: state.error.stocks,
-  setStocks: state.setStocks,
-  setStocksLoading: state.setStocksLoading,
-  setStocksError: state.setStocksError,
-}));
+export const useStocksData = () => {
+  return useStockStore((state) => ({
+    stocks: state.stocks,
+    loading: state.loading.stocks,
+    error: state.error.stocks,
+    setStocks: state.setStocks,
+    setStocksLoading: state.setStocksLoading,
+    setStocksError: state.setStocksError,
+  }), shallow);
+};
 
-export const useStockCache = () => useStockStore((state) => ({
-  stockCache: state.stockCache,
-  setStockInCache: state.setStockInCache,
-  loading: state.loading.individual,
-  error: state.error.individual,
-  setIndividualLoading: state.setIndividualLoading,
-  setIndividualError: state.setIndividualError,
-}));
+export const useStockCache = () => {
+  return useStockStore((state) => ({
+    stockCache: state.stockCache,
+    setStockInCache: state.setStockInCache,
+    loading: state.loading.individual,
+    error: state.error.individual,
+    setIndividualLoading: state.setIndividualLoading,
+    setIndividualError: state.setIndividualError,
+  }), shallow);
+};
 
-export const useChartCache = () => useStockStore((state) => ({
-  chartDataCache: state.chartDataCache,
-  setChartDataInCache: state.setChartDataInCache,
-  loading: state.loading.charts,
-  error: state.error.charts,
-  setChartLoading: state.setChartLoading,
-  setChartError: state.setChartError,
-}));
+export const useChartCache = () => {
+  return useStockStore((state) => ({
+    chartDataCache: state.chartDataCache,
+    setChartDataInCache: state.setChartDataInCache,
+    loading: state.loading.charts,
+    error: state.error.charts,
+    setChartLoading: state.setChartLoading,
+    setChartError: state.setChartError,
+  }), shallow);
+};
 
-export const useQuoteCache = () => useStockStore((state) => ({
-  quotesCache: state.quotesCache,
-  setQuoteInCache: state.setQuoteInCache,
-  loading: state.loading.quotes,
-  error: state.error.quotes,
-  setQuoteLoading: state.setQuoteLoading,
-  setQuoteError: state.setQuoteError,
-}));
+export const useQuoteCache = () => {
+  return useStockStore((state) => ({
+    quotesCache: state.quotesCache,
+    setQuoteInCache: state.setQuoteInCache,
+    loading: state.loading.quotes,
+    error: state.error.quotes,
+    setQuoteLoading: state.setQuoteLoading,
+    setQuoteError: state.setQuoteError,
+  }), shallow);
+};
