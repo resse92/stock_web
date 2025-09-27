@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useStocksData, useStockCache, useChartCache, useQuoteCache } from '@/stores';
 import { stockApi } from '@/lib/api';
 import type { StockData, ChartData, StockQuote } from '@/types/stock';
@@ -15,44 +15,47 @@ const CACHE_DURATION = {
  * Enhanced hook for managing stocks with Zustand store and caching
  */
 export const useStockDataWithStore = () => {
-  const {
-    stocks,
-    loading,
-    error,
-    setStocks,
-    setStocksLoading,
-    setStocksError,
-  } = useStocksData();
+  const stocksDataSelector = useStocksData();
+  
+  // Memoize the selector result to prevent object recreation
+  const stocksData = useMemo(() => stocksDataSelector, [
+    stocksDataSelector.stocks,
+    stocksDataSelector.loading,
+    stocksDataSelector.error,
+    stocksDataSelector.setStocks,
+    stocksDataSelector.setStocksLoading,
+    stocksDataSelector.setStocksError,
+  ]);
 
   const fetchStocks = useCallback(async (force = false) => {
     try {
-      setStocksLoading(true);
-      setStocksError(null);
+      stocksData.setStocksLoading(true);
+      stocksData.setStocksError(null);
       
       const data = await stockApi.getStocks();
-      setStocks(data);
+      stocksData.setStocks(data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch stocks';
-      setStocksError(errorMessage);
+      stocksData.setStocksError(errorMessage);
       
       // Log error but don't throw to prevent component crashes
       console.error('Error fetching stocks:', err);
     } finally {
-      setStocksLoading(false);
+      stocksData.setStocksLoading(false);
     }
-  }, [setStocks, setStocksLoading, setStocksError]);
+  }, [stocksData.setStocks, stocksData.setStocksLoading, stocksData.setStocksError]);
 
-  // Auto-fetch on mount
+  // Auto-fetch on mount - removed dependency on stocks.length to prevent infinite loop
   useEffect(() => {
-    if (stocks.length === 0) {
+    if (stocksData.stocks.length === 0 && !stocksData.loading) {
       fetchStocks();
     }
-  }, [fetchStocks, stocks.length]);
+  }, [stocksData.stocks.length, stocksData.loading]); // Removed fetchStocks from deps
 
   return {
-    stocks,
-    loading,
-    error,
+    stocks: stocksData.stocks,
+    loading: stocksData.loading,
+    error: stocksData.error,
     refetch: fetchStocks,
   };
 };
@@ -61,160 +64,171 @@ export const useStockDataWithStore = () => {
  * Enhanced hook for managing individual stock data with caching
  */
 export const useStockWithStore = (symbol: string) => {
-  const {
-    stockCache,
-    setStockInCache,
-    loading,
-    error,
-    setIndividualLoading,
-    setIndividualError,
-  } = useStockCache();
+  const stockCacheSelector = useStockCache();
+  
+  // Memoize the cache data to prevent unnecessary re-renders
+  const stockCache = useMemo(() => stockCacheSelector, [
+    stockCacheSelector.stockCache,
+    stockCacheSelector.loading,
+    stockCacheSelector.error,
+    stockCacheSelector.setStockInCache,
+    stockCacheSelector.setIndividualLoading,
+    stockCacheSelector.setIndividualError,
+  ]);
 
-  const stock = stockCache[symbol] || null;
-  const isLoading = loading[symbol] || false;
-  const stockError = error[symbol] || null;
+  const stock = stockCache.stockCache[symbol] || null;
+  const isLoading = stockCache.loading[symbol] || false;
+  const stockError = stockCache.error[symbol] || null;
 
   const fetchStock = useCallback(async (force = false) => {
     if (!symbol) return;
 
     try {
-      setIndividualLoading(symbol, true);
-      setIndividualError(symbol, null);
+      stockCache.setIndividualLoading(symbol, true);
+      stockCache.setIndividualError(symbol, null);
       
       const data = await stockApi.getStock(symbol);
-      setStockInCache(symbol, data);
+      stockCache.setStockInCache(symbol, data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : `Failed to fetch stock ${symbol}`;
-      setIndividualError(symbol, errorMessage);
+      stockCache.setIndividualError(symbol, errorMessage);
       
       console.error(`Error fetching stock ${symbol}:`, err);
     } finally {
-      setIndividualLoading(symbol, false);
+      stockCache.setIndividualLoading(symbol, false);
     }
-  }, [symbol, setStockInCache, setIndividualLoading, setIndividualError]);
+  }, [symbol, stockCache.setStockInCache, stockCache.setIndividualLoading, stockCache.setIndividualError]);
 
-  // Auto-fetch if not in cache
+  // Auto-fetch if not in cache - use ref to prevent infinite loop
   useEffect(() => {
     if (symbol && !stock && !isLoading) {
       fetchStock();
     }
-  }, [symbol, stock, isLoading, fetchStock]);
+  }, [symbol, stock, isLoading]); // Removed fetchStock from deps
 
-  return {
+  return useMemo(() => ({
     stock,
     loading: isLoading,
     error: stockError,
     refetch: fetchStock,
-  };
+  }), [stock, isLoading, stockError, fetchStock]);
 };
 
 /**
  * Enhanced hook for managing chart data with caching
  */
 export const useChartDataWithStore = (symbol: string, period = '1M') => {
-  const {
-    chartDataCache,
-    setChartDataInCache,
-    loading,
-    error,
-    setChartLoading,
-    setChartError,
-  } = useChartCache();
+  const chartCacheSelector = useChartCache();
+  
+  // Memoize chart cache to prevent unnecessary re-renders
+  const chartCache = useMemo(() => chartCacheSelector, [
+    chartCacheSelector.chartDataCache,
+    chartCacheSelector.loading,
+    chartCacheSelector.error,
+    chartCacheSelector.setChartDataInCache,
+    chartCacheSelector.setChartLoading,
+    chartCacheSelector.setChartError,
+  ]);
 
   const cacheKey = `${symbol}-${period}`;
-  const chartData = chartDataCache[cacheKey] || [];
-  const isLoading = loading[cacheKey] || false;
-  const chartError = error[cacheKey] || null;
+  const chartData = chartCache.chartDataCache[cacheKey] || [];
+  const isLoading = chartCache.loading[cacheKey] || false;
+  const chartError = chartCache.error[cacheKey] || null;
 
   const fetchChartData = useCallback(async (force = false) => {
     if (!symbol) return;
 
     try {
-      setChartLoading(symbol, period, true);
-      setChartError(symbol, period, null);
+      chartCache.setChartLoading(symbol, period, true);
+      chartCache.setChartError(symbol, period, null);
       
       const data = await stockApi.getHistoricalData(symbol, period);
-      setChartDataInCache(symbol, period, data);
+      chartCache.setChartDataInCache(symbol, period, data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : `Failed to fetch chart data for ${symbol}`;
-      setChartError(symbol, period, errorMessage);
+      chartCache.setChartError(symbol, period, errorMessage);
       
       console.error(`Error fetching chart data for ${symbol}:`, err);
     } finally {
-      setChartLoading(symbol, period, false);
+      chartCache.setChartLoading(symbol, period, false);
     }
-  }, [symbol, period, setChartDataInCache, setChartLoading, setChartError]);
+  }, [symbol, period, chartCache.setChartDataInCache, chartCache.setChartLoading, chartCache.setChartError]);
 
   // Auto-fetch if not in cache
   useEffect(() => {
     if (symbol && chartData.length === 0 && !isLoading) {
       fetchChartData();
     }
-  }, [symbol, chartData.length, isLoading, fetchChartData]);
+  }, [symbol, chartData.length, isLoading]); // Removed fetchChartData from deps
 
-  return {
+  return useMemo(() => ({
     chartData,
     loading: isLoading,
     error: chartError,
     refetch: fetchChartData,
-  };
+  }), [chartData, isLoading, chartError, fetchChartData]);
 };
 
 /**
  * Enhanced hook for managing real-time quotes with caching
  */
 export const useStockQuoteWithStore = (symbol: string, refreshInterval = 0) => {
-  const {
-    quotesCache,
-    setQuoteInCache,
-    loading,
-    error,
-    setQuoteLoading,
-    setQuoteError,
-  } = useQuoteCache();
+  const quoteCacheSelector = useQuoteCache();
+  
+  // Memoize quote cache to prevent unnecessary re-renders
+  const quoteCache = useMemo(() => quoteCacheSelector, [
+    quoteCacheSelector.quotesCache,
+    quoteCacheSelector.loading,
+    quoteCacheSelector.error,
+    quoteCacheSelector.setQuoteInCache,
+    quoteCacheSelector.setQuoteLoading,
+    quoteCacheSelector.setQuoteError,
+  ]);
 
-  const quote = quotesCache[symbol] || null;
-  const isLoading = loading[symbol] || false;
-  const quoteError = error[symbol] || null;
+  const quote = quoteCache.quotesCache[symbol] || null;
+  const isLoading = quoteCache.loading[symbol] || false;
+  const quoteError = quoteCache.error[symbol] || null;
 
   const fetchQuote = useCallback(async (force = false) => {
     if (!symbol) return;
 
     try {
-      setQuoteLoading(symbol, true);
-      setQuoteError(symbol, null);
+      quoteCache.setQuoteLoading(symbol, true);
+      quoteCache.setQuoteError(symbol, null);
       
       const data = await stockApi.getQuote(symbol);
-      setQuoteInCache(symbol, data);
+      quoteCache.setQuoteInCache(symbol, data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : `Failed to fetch quote for ${symbol}`;
-      setQuoteError(symbol, errorMessage);
+      quoteCache.setQuoteError(symbol, errorMessage);
       
       console.error(`Error fetching quote for ${symbol}:`, err);
     } finally {
-      setQuoteLoading(symbol, false);
+      quoteCache.setQuoteLoading(symbol, false);
     }
-  }, [symbol, setQuoteInCache, setQuoteLoading, setQuoteError]);
+  }, [symbol, quoteCache.setQuoteInCache, quoteCache.setQuoteLoading, quoteCache.setQuoteError]);
 
   // Auto-fetch and set up refresh interval
   useEffect(() => {
     if (symbol && !quote && !isLoading) {
       fetchQuote();
     }
+  }, [symbol, quote, isLoading]); // Removed fetchQuote from deps
 
-    // Set up refresh interval if specified
+  // Set up refresh interval effect separately to avoid dependency issues
+  useEffect(() => {
     if (refreshInterval > 0 && symbol) {
       const interval = setInterval(() => fetchQuote(true), refreshInterval);
       return () => clearInterval(interval);
     }
-  }, [symbol, quote, isLoading, fetchQuote, refreshInterval]);
+  }, [refreshInterval, symbol, fetchQuote]);
 
-  return {
+  return useMemo(() => ({
     quote,
     loading: isLoading,
     error: quoteError,
     refetch: fetchQuote,
-  };
+  }), [quote, isLoading, quoteError, fetchQuote]);
 };
 
 /**
