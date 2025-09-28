@@ -1,10 +1,10 @@
 import React from 'react'
 import { TanStackTableDemo } from './TanStackTableDemo'
 import { Header } from './Header'
-import { useSidebar } from '@/contexts/SidebarContext'
+import { useSidebarZustand } from '@/contexts/SidebarContextZustand'
 
 export const TanStackPage: React.FC = () => {
-  const { isCollapsed } = useSidebar()
+  const { isCollapsed } = useSidebarZustand()
 
   return (
     <div className="min-h-screen bg-background">

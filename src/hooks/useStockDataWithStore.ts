@@ -6,15 +6,6 @@ import {
   useQuoteCache,
 } from '@/stores'
 import { stockApi } from '@/lib/api'
-import type { StockData, ChartData, StockQuote } from '@/types/stock'
-
-// Cache duration in milliseconds
-const CACHE_DURATION = {
-  STOCKS: 5 * 60 * 1000, // 5 minutes
-  INDIVIDUAL: 2 * 60 * 1000, // 2 minutes
-  CHARTS: 10 * 60 * 1000, // 10 minutes
-  QUOTES: 30 * 1000, // 30 seconds
-}
 
 /**
  * Enhanced hook for managing stocks with Zustand store and caching

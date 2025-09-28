@@ -96,18 +96,21 @@ function UserPreferencesComponent() {
 ## 🛠️ Available Stores
 
 ### UI Store
+
 - `useSidebarState()` - Sidebar collapse/expand
 - `useThemeState()` - Theme management
 - `useLoadingState()` - Global loading states
 - `useModalState()` - Modal management
 
 ### Stock Store
+
 - `useStocksData()` - All stocks data
 - `useStockCache()` - Individual stock caching
 - `useChartCache()` - Chart data caching
 - `useQuoteCache()` - Real-time quotes
 
 ### User Store
+
 - `useWatchlist()` - Stock watchlist
 - `usePortfolio()` - Portfolio management
 - `useUserSettings()` - User preferences
@@ -117,33 +120,41 @@ function UserPreferencesComponent() {
 ## 🔗 Enhanced Hooks
 
 ### useStockDataWithStore()
+
 Enhanced hook that combines Zustand store with API calls:
+
 - Automatic caching
 - Error handling
 - Loading states
 - Force refresh capability
 
 ### useChartDataWithStore(symbol, period)
+
 Chart data with intelligent caching:
+
 - Per-symbol and per-period caching
 - Automatic invalidation
 - Loading states
 
 ### useStockQuoteWithStore(symbol, refreshInterval)
+
 Real-time quotes with auto-refresh:
+
 - Configurable refresh intervals
 - Automatic caching
 - Error recovery
 
 ## 🎨 Global vs Local State
 
-### Use Zustand (Global) for:
+### Use Zustand (Global) for
+
 - User preferences and settings
 - Cached API data
 - Cross-component UI state (theme, sidebar)
 - Persistent data (watchlist, portfolio)
 
-### Use React useState (Local) for:
+### Use React useState (Local) for
+
 - Form inputs
 - Component-specific UI (hover states, dropdowns)
 - Temporary data (search queries)
@@ -152,6 +163,7 @@ Real-time quotes with auto-refresh:
 ## 🔧 Advanced Patterns
 
 ### Selective Subscriptions
+
 ```tsx
 // Only re-renders when sidebar state changes
 const { isCollapsed } = useSidebarState();
@@ -161,6 +173,7 @@ const uiStore = useUIStore();
 ```
 
 ### Combining Multiple Stores
+
 ```tsx
 function DashboardComponent() {
   const { stocks } = useStocksData();
