@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
-import { shallow } from 'zustand/shallow';
-import type { UserState, UserActions } from '@/types/store';
+import { create } from 'zustand'
+import { devtools, persist } from 'zustand/middleware'
+import { useShallow } from 'zustand/react/shallow'
+import type { UserState, UserActions } from '@/types/store'
 
 // Initial user state
 const initialUserState: UserState = {
@@ -21,7 +21,7 @@ const initialUserState: UserState = {
     chartType: 'line',
     showVolume: true,
   },
-};
+}
 
 // User Store with actions
 export interface UserStore extends UserState, UserActions {}
@@ -42,78 +42,82 @@ export const useUserStore = create<UserStore>()(
             }),
             false,
             'user/addToWatchlist'
-          );
+          )
         },
 
         removeFromWatchlist: (symbol: string) => {
           set(
             (state) => ({
-              watchlist: state.watchlist.filter(s => s !== symbol),
+              watchlist: state.watchlist.filter((s) => s !== symbol),
             }),
             false,
             'user/removeFromWatchlist'
-          );
+          )
         },
 
         setWatchlist: (symbols: string[]) => {
-          set(
-            { watchlist: symbols },
-            false,
-            'user/setWatchlist'
-          );
+          set({ watchlist: symbols }, false, 'user/setWatchlist')
         },
 
         // Portfolio actions
         addToPortfolio: (symbol: string, shares: number, avgPrice: number) => {
           set(
             (state) => {
-              const existingIndex = state.portfolio.findIndex(p => p.symbol === symbol);
+              const existingIndex = state.portfolio.findIndex(
+                (p) => p.symbol === symbol
+              )
               if (existingIndex >= 0) {
                 // Update existing position
-                const newPortfolio = [...state.portfolio];
-                const existing = newPortfolio[existingIndex];
-                const totalShares = existing.shares + shares;
-                const newAvgPrice = ((existing.avgPrice * existing.shares) + (avgPrice * shares)) / totalShares;
-                
+                const newPortfolio = [...state.portfolio]
+                const existing = newPortfolio[existingIndex]
+                const totalShares = existing.shares + shares
+                const newAvgPrice =
+                  (existing.avgPrice * existing.shares + avgPrice * shares) /
+                  totalShares
+
                 newPortfolio[existingIndex] = {
                   symbol,
                   shares: totalShares,
                   avgPrice: newAvgPrice,
-                };
-                
-                return { portfolio: newPortfolio };
+                }
+
+                return { portfolio: newPortfolio }
               } else {
                 // Add new position
                 return {
                   portfolio: [...state.portfolio, { symbol, shares, avgPrice }],
-                };
+                }
               }
             },
             false,
             'user/addToPortfolio'
-          );
+          )
         },
 
-        updatePortfolioPosition: (symbol: string, shares: number, avgPrice: number) => {
+        updatePortfolioPosition: (
+          symbol: string,
+          shares: number,
+          avgPrice: number
+        ) => {
           set(
             (state) => ({
-              portfolio: state.portfolio.map(p =>
+              portfolio: state.portfolio.map((p) =>
                 p.symbol === symbol ? { ...p, shares, avgPrice } : p
               ),
             }),
             false,
             'user/updatePortfolioPosition'
-          );
+          )
         },
 
         removeFromPortfolio: (symbol: string) => {
           set(
             (state) => ({
-              portfolio: state.portfolio.filter(p => p.symbol !== symbol),
+              portfolio: state.portfolio.filter((p) => p.symbol !== symbol),
             }),
             false,
             'user/removeFromPortfolio'
-          );
+          )
         },
 
         // Settings actions
@@ -131,10 +135,12 @@ export const useUserStore = create<UserStore>()(
             }),
             false,
             'user/updateSettings'
-          );
+          )
         },
 
-        updateViewPreferences: (preferences: Partial<UserState['viewPreferences']>) => {
+        updateViewPreferences: (
+          preferences: Partial<UserState['viewPreferences']>
+        ) => {
           set(
             (state) => ({
               viewPreferences: {
@@ -144,7 +150,7 @@ export const useUserStore = create<UserStore>()(
             }),
             false,
             'user/updateViewPreferences'
-          );
+          )
         },
 
         // Favorites actions
@@ -160,7 +166,7 @@ export const useUserStore = create<UserStore>()(
             }),
             false,
             'user/addToFavorites'
-          );
+          )
         },
 
         removeFromFavorites: (symbol: string) => {
@@ -168,12 +174,14 @@ export const useUserStore = create<UserStore>()(
             (state) => ({
               settings: {
                 ...state.settings,
-                favoriteSymbols: state.settings.favoriteSymbols.filter(s => s !== symbol),
+                favoriteSymbols: state.settings.favoriteSymbols.filter(
+                  (s) => s !== symbol
+                ),
               },
             }),
             false,
             'user/removeFromFavorites'
-          );
+          )
         },
       }),
       {
@@ -185,35 +193,50 @@ export const useUserStore = create<UserStore>()(
       name: 'UserStore',
     }
   )
-);
+)
 
 // Selector hooks for better performance
-export const useWatchlist = () => useUserStore((state) => ({
-  watchlist: state.watchlist,
-  addToWatchlist: state.addToWatchlist,
-  removeFromWatchlist: state.removeFromWatchlist,
-  setWatchlist: state.setWatchlist,
-}), shallow);
+export const useWatchlist = () =>
+  useUserStore(
+    useShallow((state) => ({
+      watchlist: state.watchlist,
+      addToWatchlist: state.addToWatchlist,
+      removeFromWatchlist: state.removeFromWatchlist,
+      setWatchlist: state.setWatchlist,
+    }))
+  )
 
-export const usePortfolio = () => useUserStore((state) => ({
-  portfolio: state.portfolio,
-  addToPortfolio: state.addToPortfolio,
-  updatePortfolioPosition: state.updatePortfolioPosition,
-  removeFromPortfolio: state.removeFromPortfolio,
-}), shallow);
+export const usePortfolio = () =>
+  useUserStore(
+    useShallow((state) => ({
+      portfolio: state.portfolio,
+      addToPortfolio: state.addToPortfolio,
+      updatePortfolioPosition: state.updatePortfolioPosition,
+      removeFromPortfolio: state.removeFromPortfolio,
+    }))
+  )
 
-export const useUserSettings = () => useUserStore((state) => ({
-  settings: state.settings,
-  updateSettings: state.updateSettings,
-}), shallow);
+export const useUserSettings = () =>
+  useUserStore(
+    useShallow((state) => ({
+      settings: state.settings,
+      updateSettings: state.updateSettings,
+    }))
+  )
 
-export const useViewPreferences = () => useUserStore((state) => ({
-  viewPreferences: state.viewPreferences,
-  updateViewPreferences: state.updateViewPreferences,
-}), shallow);
+export const useViewPreferences = () =>
+  useUserStore(
+    useShallow((state) => ({
+      viewPreferences: state.viewPreferences,
+      updateViewPreferences: state.updateViewPreferences,
+    }))
+  )
 
-export const useFavorites = () => useUserStore((state) => ({
-  favoriteSymbols: state.settings.favoriteSymbols,
-  addToFavorites: state.addToFavorites,
-  removeFromFavorites: state.removeFromFavorites,
-}), shallow);
+export const useFavorites = () =>
+  useUserStore(
+    useShallow((state) => ({
+      favoriteSymbols: state.settings.favoriteSymbols,
+      addToFavorites: state.addToFavorites,
+      removeFromFavorites: state.removeFromFavorites,
+    }))
+  )

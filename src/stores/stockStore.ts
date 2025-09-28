@@ -1,8 +1,8 @@
-import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
-import { shallow } from 'zustand/shallow';
-import type { StockState, StockActions } from '@/types/store';
-import type { StockData, ChartData, StockQuote } from '@/types/stock';
+import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
+import { useShallow } from 'zustand/react/shallow'
+import type { StockState, StockActions } from '@/types/store'
+import type { StockData, ChartData, StockQuote } from '@/types/stock'
 
 // Initial stock state
 const initialStockState: StockState = {
@@ -28,7 +28,7 @@ const initialStockState: StockState = {
     charts: {},
     quotes: {},
   },
-};
+}
 
 // Stock Store with actions
 export interface StockStore extends StockState, StockActions {}
@@ -50,13 +50,16 @@ export const useStockStore = create<StockStore>()(
           },
           false,
           'stocks/setStocks'
-        );
+        )
       },
 
       addStock: (stock: StockData) => {
         set(
           (state) => ({
-            stocks: [...state.stocks.filter(s => s.symbol !== stock.symbol), stock],
+            stocks: [
+              ...state.stocks.filter((s) => s.symbol !== stock.symbol),
+              stock,
+            ],
             stockCache: {
               ...state.stockCache,
               [stock.symbol]: stock,
@@ -64,25 +67,25 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/addStock'
-        );
+        )
       },
 
       updateStock: (symbol: string, updates: Partial<StockData>) => {
         set(
           (state) => ({
-            stocks: state.stocks.map(stock => 
+            stocks: state.stocks.map((stock) =>
               stock.symbol === symbol ? { ...stock, ...updates } : stock
             ),
             stockCache: {
               ...state.stockCache,
-              [symbol]: state.stockCache[symbol] 
+              [symbol]: state.stockCache[symbol]
                 ? { ...state.stockCache[symbol], ...updates }
                 : state.stockCache[symbol],
             },
           }),
           false,
           'stocks/updateStock'
-        );
+        )
       },
 
       // Cache management
@@ -103,11 +106,15 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/setStockInCache'
-        );
+        )
       },
 
-      setChartDataInCache: (symbol: string, period: string, data: ChartData[]) => {
-        const key = `${symbol}-${period}`;
+      setChartDataInCache: (
+        symbol: string,
+        period: string,
+        data: ChartData[]
+      ) => {
+        const key = `${symbol}-${period}`
         set(
           (state) => ({
             chartDataCache: {
@@ -124,7 +131,7 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/setChartDataInCache'
-        );
+        )
       },
 
       setQuoteInCache: (symbol: string, quote: StockQuote) => {
@@ -144,7 +151,7 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/setQuoteInCache'
-        );
+        )
       },
 
       // Loading states
@@ -158,7 +165,7 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/setStocksLoading'
-        );
+        )
       },
 
       setIndividualLoading: (symbol: string, loading: boolean) => {
@@ -174,11 +181,11 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/setIndividualLoading'
-        );
+        )
       },
 
       setChartLoading: (symbol: string, period: string, loading: boolean) => {
-        const key = `${symbol}-${period}`;
+        const key = `${symbol}-${period}`
         set(
           (state) => ({
             loading: {
@@ -191,7 +198,7 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/setChartLoading'
-        );
+        )
       },
 
       setQuoteLoading: (symbol: string, loading: boolean) => {
@@ -207,7 +214,7 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/setQuoteLoading'
-        );
+        )
       },
 
       // Error states
@@ -221,7 +228,7 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/setStocksError'
-        );
+        )
       },
 
       setIndividualError: (symbol: string, error: string | null) => {
@@ -237,11 +244,11 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/setIndividualError'
-        );
+        )
       },
 
       setChartError: (symbol: string, period: string, error: string | null) => {
-        const key = `${symbol}-${period}`;
+        const key = `${symbol}-${period}`
         set(
           (state) => ({
             error: {
@@ -254,7 +261,7 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/setChartError'
-        );
+        )
       },
 
       setQuoteError: (symbol: string, error: string | null) => {
@@ -270,7 +277,7 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/setQuoteError'
-        );
+        )
       },
 
       // Cache invalidation
@@ -284,7 +291,7 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/invalidateStocksCache'
-        );
+        )
       },
 
       invalidateStockCache: (symbol: string) => {
@@ -300,36 +307,36 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/invalidateStockCache'
-        );
+        )
       },
 
       invalidateChartCache: (symbol: string, period?: string) => {
         set(
           (state) => {
-            const newChartsFetch = { ...state.lastFetch.charts };
-            
+            const newChartsFetch = { ...state.lastFetch.charts }
+
             if (period) {
-              const key = `${symbol}-${period}`;
-              newChartsFetch[key] = 0;
+              const key = `${symbol}-${period}`
+              newChartsFetch[key] = 0
             } else {
               // Invalidate all periods for this symbol
-              Object.keys(newChartsFetch).forEach(key => {
+              Object.keys(newChartsFetch).forEach((key) => {
                 if (key.startsWith(`${symbol}-`)) {
-                  newChartsFetch[key] = 0;
+                  newChartsFetch[key] = 0
                 }
-              });
+              })
             }
-            
+
             return {
               lastFetch: {
                 ...state.lastFetch,
                 charts: newChartsFetch,
               },
-            };
+            }
           },
           false,
           'stocks/invalidateChartCache'
-        );
+        )
       },
 
       invalidateQuoteCache: (symbol: string) => {
@@ -345,56 +352,64 @@ export const useStockStore = create<StockStore>()(
           }),
           false,
           'stocks/invalidateQuoteCache'
-        );
+        )
       },
     }),
     {
       name: 'StockStore',
     }
   )
-);
+)
 
 // Selector hooks for better performance
 export const useStocksData = () => {
-  return useStockStore((state) => ({
-    stocks: state.stocks,
-    loading: state.loading.stocks,
-    error: state.error.stocks,
-    setStocks: state.setStocks,
-    setStocksLoading: state.setStocksLoading,
-    setStocksError: state.setStocksError,
-  }), shallow);
-};
+  return useStockStore(
+    useShallow((state) => ({
+      stocks: state.stocks,
+      loading: state.loading.stocks,
+      error: state.error.stocks,
+      setStocks: state.setStocks,
+      setStocksLoading: state.setStocksLoading,
+      setStocksError: state.setStocksError,
+    }))
+  )
+}
 
 export const useStockCache = () => {
-  return useStockStore((state) => ({
-    stockCache: state.stockCache,
-    setStockInCache: state.setStockInCache,
-    loading: state.loading.individual,
-    error: state.error.individual,
-    setIndividualLoading: state.setIndividualLoading,
-    setIndividualError: state.setIndividualError,
-  }), shallow);
-};
+  return useStockStore(
+    useShallow((state) => ({
+      stockCache: state.stockCache,
+      setStockInCache: state.setStockInCache,
+      loading: state.loading.individual,
+      error: state.error.individual,
+      setIndividualLoading: state.setIndividualLoading,
+      setIndividualError: state.setIndividualError,
+    }))
+  )
+}
 
 export const useChartCache = () => {
-  return useStockStore((state) => ({
-    chartDataCache: state.chartDataCache,
-    setChartDataInCache: state.setChartDataInCache,
-    loading: state.loading.charts,
-    error: state.error.charts,
-    setChartLoading: state.setChartLoading,
-    setChartError: state.setChartError,
-  }), shallow);
-};
+  return useStockStore(
+    useShallow((state) => ({
+      chartDataCache: state.chartDataCache,
+      setChartDataInCache: state.setChartDataInCache,
+      loading: state.loading.charts,
+      error: state.error.charts,
+      setChartLoading: state.setChartLoading,
+      setChartError: state.setChartError,
+    }))
+  )
+}
 
 export const useQuoteCache = () => {
-  return useStockStore((state) => ({
-    quotesCache: state.quotesCache,
-    setQuoteInCache: state.setQuoteInCache,
-    loading: state.loading.quotes,
-    error: state.error.quotes,
-    setQuoteLoading: state.setQuoteLoading,
-    setQuoteError: state.setQuoteError,
-  }), shallow);
-};
+  return useStockStore(
+    useShallow((state) => ({
+      quotesCache: state.quotesCache,
+      setQuoteInCache: state.setQuoteInCache,
+      loading: state.loading.quotes,
+      error: state.error.quotes,
+      setQuoteLoading: state.setQuoteLoading,
+      setQuoteError: state.setQuoteError,
+    }))
+  )
+}

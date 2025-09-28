@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
-import { shallow } from 'zustand/shallow';
-import type { UIState, UIActions } from '@/types/store';
+import { create } from 'zustand'
+import { devtools, persist } from 'zustand/middleware'
+import { useShallow } from 'zustand/react/shallow'
+import type { UIState, UIActions } from '@/types/store'
 
 // Initial UI state
 const initialUIState: UIState = {
@@ -21,7 +21,7 @@ const initialUIState: UIState = {
       isOpen: false,
     },
   },
-};
+}
 
 // UI Store with actions
 export interface UIStore extends UIState, UIActions {}
@@ -40,7 +40,7 @@ export const useUIStore = create<UIStore>()(
             }),
             false,
             'ui/toggleSidebar'
-          );
+          )
         },
 
         setSidebarCollapsed: (collapsed: boolean) => {
@@ -48,12 +48,12 @@ export const useUIStore = create<UIStore>()(
             { isSidebarCollapsed: collapsed },
             false,
             'ui/setSidebarCollapsed'
-          );
+          )
         },
 
         // Theme actions
         setTheme: (theme: UIState['theme']) => {
-          set({ theme }, false, 'ui/setTheme');
+          set({ theme }, false, 'ui/setTheme')
         },
 
         // Loading actions
@@ -67,7 +67,7 @@ export const useUIStore = create<UIStore>()(
             }),
             false,
             `ui/setLoading/${section}`
-          );
+          )
         },
 
         // Modal actions
@@ -84,7 +84,7 @@ export const useUIStore = create<UIStore>()(
             }),
             false,
             `ui/openModal/${modal}`
-          );
+          )
         },
 
         closeModal: (modal: keyof UIState['modals']) => {
@@ -100,7 +100,7 @@ export const useUIStore = create<UIStore>()(
             }),
             false,
             `ui/closeModal/${modal}`
-          );
+          )
         },
       }),
       {
@@ -116,27 +116,39 @@ export const useUIStore = create<UIStore>()(
       name: 'UIStore',
     }
   )
-);
+)
 
 // Selector hooks for better performance
-export const useSidebarState = () => useUIStore((state) => ({
-  isCollapsed: state.isSidebarCollapsed,
-  toggleSidebar: state.toggleSidebar,
-  setCollapsed: state.setSidebarCollapsed,
-}), shallow);
+export const useSidebarState = () =>
+  useUIStore(
+    useShallow((state) => ({
+      isCollapsed: state.isSidebarCollapsed,
+      toggleSidebar: state.toggleSidebar,
+      setCollapsed: state.setSidebarCollapsed,
+    }))
+  )
 
-export const useThemeState = () => useUIStore((state) => ({
-  theme: state.theme,
-  setTheme: state.setTheme,
-}), shallow);
+export const useThemeState = () =>
+  useUIStore(
+    useShallow((state) => ({
+      theme: state.theme,
+      setTheme: state.setTheme,
+    }))
+  )
 
-export const useLoadingState = () => useUIStore((state) => ({
-  isLoading: state.isLoading,
-  setLoading: state.setLoading,
-}), shallow);
+export const useLoadingState = () =>
+  useUIStore(
+    useShallow((state) => ({
+      isLoading: state.isLoading,
+      setLoading: state.setLoading,
+    }))
+  )
 
-export const useModalState = () => useUIStore((state) => ({
-  modals: state.modals,
-  openModal: state.openModal,
-  closeModal: state.closeModal,
-}), shallow);
+export const useModalState = () =>
+  useUIStore(
+    useShallow((state) => ({
+      modals: state.modals,
+      openModal: state.openModal,
+      closeModal: state.closeModal,
+    }))
+  )
