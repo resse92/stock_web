@@ -8,7 +8,7 @@ import {
   type SortingState,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { generateLargeStockDataset } from '@/utils/demoData'
 import { formatCurrency, formatMarketCap, formatVolume } from '@/utils/mockData'
 import type { StockData } from '@/types/stock'
@@ -16,7 +16,7 @@ import { TrendingUp, TrendingDown } from 'lucide-react'
 
 const columnHelper = createColumnHelper<StockData>()
 
-export const TanStackTableDemo: React.FC = () => {
+export const RPSTable: React.FC = () => {
   const [sorting, setSorting] = React.useState<SortingState>([])
 
   // Generate large dataset for demonstration
