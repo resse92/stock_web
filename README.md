@@ -1,190 +1,391 @@
-# StockWeb - React Stock Dashboard Demo
+# StockWeb - React 股票仪表板
 
-A modern, responsive stock dashboard built with React, TypeScript, Tailwind CSS, shadcn/ui, and Recharts. This project demonstrates a scalable architecture for financial applications with real-time data visualization capabilities.
+一个现代化、响应式的股票仪表板，使用 React、TypeScript、Tailwind CSS、shadcn/ui、Recharts 和 Zustand 构建。
 
-![StockWeb Demo](https://github.com/user-attachments/assets/8cd0afb6-0ba3-4638-88c5-e3801069fa50)
+## 🚀 快速开始
 
-## 🚀 Features
+### 环境要求
+- Node.js 18+ 和 pnpm
+- 现代浏览器
 
-- **Modern Tech Stack**: React 19, TypeScript, Vite for fast development
-- **Responsive Design**: Mobile-first approach with Tailwind CSS
-- **Component Library**: shadcn/ui for consistent, accessible UI components
-- **Data Visualization**: Interactive charts with Recharts
-- **Mock Data**: Simulated stock data with realistic market scenarios
-- **Extensible Architecture**: Modular structure for easy maintenance and scaling
+### 安装步骤
 
-## 🛠️ Tech Stack
-
-- **Frontend Framework**: React 19 with TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui (Radix UI primitives)
-- **Charts**: Recharts
-- **Icons**: Lucide React
-- **Utilities**: clsx, tailwind-merge, class-variance-authority
-
-## 📦 Project Structure
-
-```
-src/
-├── components/          # Reusable UI components
-│   ├── ui/             # shadcn/ui components (Button, Card, etc.)
-│   ├── Dashboard.tsx   # Main dashboard component
-│   ├── Header.tsx      # Navigation header
-│   ├── StockCard.tsx   # Individual stock display card
-│   └── StockChart.tsx  # Chart visualization component
-├── hooks/              # Custom React hooks (for future use)
-├── lib/                # Utility libraries
-│   └── utils.ts        # Common utility functions
-├── types/              # TypeScript type definitions
-│   └── stock.ts        # Stock-related types
-├── utils/              # Helper functions
-│   └── mockData.ts     # Mock data generation and formatting
-├── App.tsx             # Root application component
-├── main.tsx           # Application entry point
-└── index.css          # Global styles and Tailwind imports
-```
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js 18+ and npm/yarn
-- Modern web browser
-
-### Installation
-
-1. **Clone the repository**
+1. **克隆仓库**
    ```bash
    git clone <repository-url>
    cd stock_web
    ```
 
-2. **Install dependencies**
+2. **安装依赖**
    ```bash
-   npm install
+   pnpm install
    ```
 
-3. **Start development server**
+3. **启动开发服务器**
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
-4. **Open in browser**
-   Navigate to `http://localhost:5173`
+4. **在浏览器中打开**
+   访问 `http://localhost:5173`
 
-### Build for Production
-
+### 生产构建
 ```bash
-npm run build
-npm run preview  # Preview production build locally
+pnpm build
+pnpm preview  # 本地预览生产构建
 ```
 
-## 🏗️ Development
+## 🏗️ 基础架构
 
-### Available Scripts
+### 技术栈架构
+```
+React 19 (前端框架)
+├── TypeScript (类型安全)
+├── Vite (构建工具)
+├── Tailwind CSS (样式框架)
+└── ESLint (代码规范)
+```
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+### 状态管理架构
+```
+Zustand (状态管理)
+├── React Hooks (状态集成)
+├── localStorage (持久化)
+└── Redux DevTools (调试)
+```
 
-### Adding New Components
+### UI 组件架构
+```
+shadcn/ui (组件库)
+├── Radix UI (底层组件原语)
+├── Lucide React (图标库)
+├── class-variance-authority (样式变体)
+├── clsx (条件样式)
+└── tailwind-merge (样式合并)
+```
 
-1. Create component in appropriate directory under `src/components/`
-2. Export from component file
-3. Import and use in parent components
-4. Follow existing patterns for TypeScript interfaces
+### 数据流架构
+```
+HTTP Client → API Service → Zustand Store → React Components
+     ↓              ↓            ↓              ↓
+  Mock Data    Error Handling   Caching      UI Updates
+```
 
-### Extending the Data Model
+## 📚 使用教程
 
-1. Update types in `src/types/stock.ts`
-2. Modify mock data in `src/utils/mockData.ts`
-3. Update components to handle new data fields
+### 1. Zustand 状态管理
 
-## 🎨 Customization
+#### 基础用法
+```tsx
+import { useSidebarState, useThemeState } from '@/stores';
 
-### Theming
-
-The project uses CSS custom properties for theming. Modify colors in `src/index.css`:
-
-```css
-:root {
-  --primary: 221.2 83.2% 53.3%;
-  --background: 0 0% 100%;
-  /* ... other theme variables */
+function MyComponent() {
+  const { isCollapsed, toggleSidebar } = useSidebarState();
+  const { theme, setTheme } = useThemeState();
+  
+  return (
+    <div>
+      <button onClick={toggleSidebar}>
+        {isCollapsed ? '展开' : '收起'} 侧边栏
+      </button>
+      <button onClick={() => setTheme('dark')}>
+        切换到深色主题
+      </button>
+    </div>
+  );
 }
 ```
 
-### Adding New Charts
+#### 股票数据管理
+```tsx
+import { useStockDataWithStore, useChartDataWithStore } from '@/hooks/useStockDataWithStore';
 
-1. Import required chart type from Recharts
-2. Create new chart component following `StockChart.tsx` pattern
-3. Add to dashboard or create new page
+function StockComponent() {
+  const { stocks, loading, error, refetch } = useStockDataWithStore();
+  const { chartData, loading: chartLoading } = useChartDataWithStore('AAPL', '1M');
+  
+  if (loading) return <div>加载中...</div>;
+  if (error) return <div>错误: {error}</div>;
+  
+  return (
+    <div>
+      <button onClick={() => refetch()}>刷新数据</button>
+      {stocks.map(stock => (
+        <div key={stock.symbol}>
+          {stock.symbol}: ${stock.price}
+        </div>
+      ))}
+    </div>
+  );
+}
+```
 
-### Responsive Breakpoints
+#### 用户偏好管理
+```tsx
+import { useWatchlist, usePortfolio, useUserSettings } from '@/stores';
 
-Tailwind CSS breakpoints used:
-- `sm`: 640px+
-- `md`: 768px+
-- `lg`: 1024px+
-- `xl`: 1280px+
+function UserPreferencesComponent() {
+  const { watchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
+  const { portfolio, addToPortfolio } = usePortfolio();
+  const { settings, updateSettings } = useUserSettings();
+  
+  return (
+    <div>
+      <h3>关注列表 ({watchlist.length})</h3>
+      {watchlist.map(symbol => (
+        <div key={symbol}>
+          {symbol}
+          <button onClick={() => removeFromWatchlist(symbol)}>移除</button>
+        </div>
+      ))}
+      
+      <button onClick={() => addToWatchlist('MSFT')}>
+        添加 MSFT
+      </button>
+      
+      <button onClick={() => updateSettings({ refreshInterval: 60000 })}>
+        设置 1 分钟刷新
+      </button>
+    </div>
+  );
+}
+```
 
-## 🔧 Configuration Files
+### 2. API 集成
 
-- `vite.config.ts` - Vite configuration with path aliases
-- `tailwind.config.js` - Tailwind CSS configuration
-- `postcss.config.js` - PostCSS configuration
-- `tsconfig.json` - TypeScript configuration
-- `eslint.config.js` - ESLint configuration
+#### 环境配置
+创建 `.env` 文件：
+```env
+# API 配置
+VITE_API_BASE_URL=http://localhost:3000
+VITE_API_TIMEOUT=10000
 
-## 🚀 Deployment
+# WebSocket 配置
+VITE_WS_URL=ws://localhost:3000/ws
 
-### Netlify/Vercel
-1. Connect repository to platform
-2. Set build command: `npm run build`
-3. Set publish directory: `dist`
+# 环境设置
+VITE_APP_ENV=development
+```
 
-### Manual Deployment
-1. Run `npm run build`
-2. Upload `dist/` folder to web server
+#### HTTP 客户端使用
+```typescript
+import { httpClient } from '@/lib/http-client';
 
-## 🔮 Future Enhancements
+// GET 请求
+const response = await httpClient.get<StockData[]>('/api/stocks');
 
-### Immediate Improvements
-- [ ] Add real-time data integration (WebSocket/API)
-- [ ] Implement dark/light theme toggle
-- [ ] Add more chart types (candlestick, volume bars)
-- [ ] Create watchlist functionality
-- [ ] Add portfolio management features
+// POST 请求
+const response = await httpClient.post<StockData>('/api/stocks', data);
+```
 
-### Advanced Features
-- [ ] User authentication and personalization
-- [ ] Real financial API integration (Alpha Vantage, IEX Cloud)
-- [ ] Advanced technical indicators
-- [ ] News feed integration
-- [ ] Mobile app using React Native
-- [ ] PWA capabilities
+#### API 服务层使用
+```typescript
+import { stockApi } from '@/lib/api';
 
-## 🤝 Contributing
+// 获取所有股票（自动回退到模拟数据）
+const stocks = await stockApi.getStocks();
 
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
-5. Open Pull Request
+// 获取单个股票
+const stock = await stockApi.getStock('AAPL');
 
-## 📄 License
+// 获取历史数据
+const chartData = await stockApi.getHistoricalData('AAPL', '1M');
+```
 
-This project is open source and available under the [MIT License](LICENSE).
+### 3. 组件开发
 
-## 🙏 Acknowledgments
+#### 创建新组件
+```tsx
+// src/components/MyComponent.tsx
+interface MyComponentProps {
+  data: StockData;
+  onAction?: (id: string) => void;
+  className?: string;
+}
 
-- [shadcn/ui](https://ui.shadcn.com/) for the beautiful component library 
-- [Recharts](https://recharts.org/) for powerful charting capabilities
-- [Tailwind CSS](https://tailwindcss.com/) for utility-first styling
-- [Lucide](https://lucide.dev/) for modern icons
+export const MyComponent = ({ data, onAction, className }: MyComponentProps) => {
+  return (
+    <div className={className}>
+      {/* 组件内容 */}
+    </div>
+  );
+};
+```
+
+#### 使用 shadcn/ui 组件
+```tsx
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+export const StockCard = ({ stock }: { stock: StockData }) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{stock.symbol}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>${stock.price}</p>
+        <Button onClick={() => console.log('点击')}>
+          查看详情
+        </Button>
+      </CardContent>
+    </Card>
+  );
+};
+```
+
+### 4. 图表可视化
+
+#### 基础图表
+```tsx
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
+export const StockChart = ({ data }: { data: ChartData[] }) => {
+  return (
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" />
+        <YAxis />
+        <Tooltip />
+        <Line type="monotone" dataKey="price" stroke="#8884d8" />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+};
+```
+
+### 5. 主题定制
+
+#### CSS 变量定制
+```css
+/* src/index.css */
+:root {
+  --primary: 221.2 83.2% 53.3%;
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+}
+
+.dark {
+  --primary: 217.2 91.2% 59.8%;
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+}
+```
+
+#### 主题切换
+```tsx
+import { useThemeState } from '@/stores';
+
+export const ThemeToggle = () => {
+  const { theme, setTheme } = useThemeState();
+  
+  return (
+    <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+      切换主题
+    </button>
+  );
+};
+```
+
+## 🔄 状态管理策略
+
+### 全局状态 (Zustand) 使用场景
+- ✅ **用户偏好和设置**: 主题、布局、刷新间隔
+- ✅ **缓存的 API 数据**: 股票数据、图表、报价
+- ✅ **跨组件 UI 状态**: 侧边栏状态、模态框
+- ✅ **持久化数据**: 关注列表、投资组合、收藏
+
+### 局部状态 (React useState) 使用场景
+- ✅ **表单输入**: 输入字段值、验证状态
+- ✅ **组件特定 UI**: 悬停状态、下拉选择
+- ✅ **临时数据**: 搜索查询、分页状态
+- ✅ **动画状态**: 过渡效果、加载动画
+
+### 混合使用示例
+```tsx
+const StockCard = ({ stock }) => {
+  // 局部状态 - 组件特定 UI
+  const [isHovered, setIsHovered] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  
+  // 全局状态 - 用户操作
+  const { addToWatchlist, removeFromWatchlist } = useWatchlist();
+  const { addToFavorites, favoriteSymbols } = useFavorites();
+  
+  const isFavorite = favoriteSymbols.includes(stock.symbol);
+  
+  return (
+    <div 
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* 组件渲染... */}
+    </div>
+  );
+};
+```
+
+## 🛠️ 开发工具
+
+### 可用脚本
+- `pnpm dev` - 启动开发服务器
+- `pnpm build` - 生产构建
+- `pnpm preview` - 预览生产构建
+- `pnpm lint` - 运行 ESLint
+
+### 调试工具
+- **Redux DevTools**: Zustand 集成了 Redux DevTools 用于状态调试
+- **TypeScript**: 完整的类型检查和 IntelliSense
+- **ESLint**: 代码质量检查
+
+## 🚀 部署指南
+
+### Netlify/Vercel 部署
+1. 连接仓库到平台
+2. 设置构建命令: `pnpm build`
+3. 设置发布目录: `dist`
+
+### 手动部署
+1. 运行 `pnpm build`
+2. 将 `dist/` 文件夹上传到 Web 服务器
+
+### 环境变量配置
+生产环境需要设置：
+```env
+VITE_API_BASE_URL=https://your-api.com
+VITE_API_TIMEOUT=10000
+VITE_APP_ENV=production
+```
+
+## 🔍 最佳实践
+
+### 状态管理最佳实践
+1. **使用浅层相等比较**: 对于返回对象的 Zustand 选择器钩子
+2. **避免不稳定引用**: 在 useEffect 依赖数组中
+3. **记忆化返回值**: 自定义钩子中包含对象时
+4. **分离关注点**: useEffect 钩子中不要混合数据获取和间隔
+
+### 性能优化
+1. **选择性订阅**: 使用有针对性的选择器防止不必要的重新渲染
+2. **代码分割**: 使用 React.lazy 进行路由级代码分割
+3. **记忆化**: 对昂贵的计算使用 useMemo 和 useCallback
+
+### 类型安全
+1. **定义完整的 TypeScript 接口**
+2. **对所有存储操作使用严格类型**
+3. **为外部数据实现运行时类型验证**
+
+## 🐛 故障排除
+
+### 常见问题
+1. **无限循环错误**: 检查 useEffect 依赖数组中的不稳定引用
+2. **状态不更新**: 确保使用浅层相等比较的选择器
+3. **性能问题**: 检查不必要的重新渲染，使用 React DevTools
+
+### 调试技巧
+- 使用 Redux DevTools 检查状态变化
+- 使用 React DevTools Profiler 分析性能
+- 检查控制台中的 TypeScript 错误
 
 ---
-
-**Note**: This is a demonstration project with simulated data. For production use, integrate with real financial data APIs and implement proper security measures.
