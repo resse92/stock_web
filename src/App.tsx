@@ -4,8 +4,6 @@ import { Dashboard } from '@/components/Dashboard'
 import { TanStackPage } from '@/components/TanStackPage'
 import { StockDashboardAdvanced } from '@/components/StockDashboardAdvanced'
 import { NotFound } from '@/components/NotFound'
-import ZustandInfiniteLoopTest from '@/components/test/ZustandInfiniteLoopTest'
-import ComprehensiveZustandTest from '@/components/test/ComprehensiveZustandTest'
 
 function App() {
   return (
@@ -15,8 +13,6 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/tanstack" element={<TanStackPage />} />
           <Route path="/advanced" element={<StockDashboardAdvanced />} />
-          <Route path="/test" element={<ZustandInfiniteLoopTest />} />
-          <Route path="/test-comprehensive" element={<ComprehensiveZustandTest />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
