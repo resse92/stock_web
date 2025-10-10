@@ -1,6 +1,6 @@
 # StockWeb - React 股票仪表板
 
-一个现代化、响应式的股票仪表板，使用 React、TypeScript、Tailwind CSS、shadcn/ui、Recharts 和 Zustand 构建。
+一个现代化、响应式的股票仪表板，使用 React、TypeScript、Tailwind CSS、shadcn/ui、Recharts 和 Jotai 构建。
 
 ## 🚀 快速开始
 
@@ -48,10 +48,10 @@ React 19 (前端框架)
 
 ### 状态管理架构
 ```
-Zustand (状态管理)
+Jotai (原子化状态管理)
 ├── React Hooks (状态集成)
 ├── localStorage (持久化)
-└── Redux DevTools (调试)
+└── DevTools (调试支持)
 ```
 
 ### UI 组件架构
@@ -66,14 +66,14 @@ shadcn/ui (组件库)
 
 ### 数据流架构
 ```
-HTTP Client → API Service → Zustand Store → React Components
+HTTP Client → API Service → Jotai Atoms → React Components
      ↓              ↓            ↓              ↓
   Mock Data    Error Handling   Caching      UI Updates
 ```
 
 ## 📚 使用教程
 
-### 1. Zustand 状态管理
+### 1. Jotai 状态管理
 
 #### 基础用法
 ```tsx
@@ -290,7 +290,7 @@ export const ThemeToggle = () => {
 
 ## 🔄 状态管理策略
 
-### 全局状态 (Zustand) 使用场景
+### 全局状态 (Jotai) 使用场景
 - ✅ **用户偏好和设置**: 主题、布局、刷新间隔
 - ✅ **缓存的 API 数据**: 股票数据、图表、报价
 - ✅ **跨组件 UI 状态**: 侧边栏状态、模态框
