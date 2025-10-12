@@ -16,7 +16,7 @@ export const RPSFiltersComponent: React.FC<RPSFiltersProps> = ({
   onApply,
   onReset,
 }) => {
-  const handleChange = (key: keyof RPSFilters, value: any) => {
+  const handleChange = (key: keyof RPSFilters, value: string | number | undefined) => {
     onFiltersChange({
       ...filters,
       [key]: value === '' ? undefined : value,
