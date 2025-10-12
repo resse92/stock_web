@@ -31,6 +31,7 @@ export interface StockApiEndpoints {
   getStock: (symbol: string) => string;
   getHistoricalData: (symbol: string, period?: string) => string;
   getQuote: (symbol: string) => string;
+  getRPS: (filters?: Record<string, any>) => string;
 }
 
 // Environment Configuration
