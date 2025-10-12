@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import Button from '@/components/ui/button';
 import { useSidebarZustand } from '@/contexts/SidebarContextZustand';
-import { Home, BarChart3, User, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Home, BarChart3, User, Settings, ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
 
 export const Header = () => {
   const location = useLocation();
@@ -10,6 +10,7 @@ export const Header = () => {
   const navItems = [
     { path: '/', label: 'Dashboard', icon: Home },
     { path: '/advanced', label: 'Advanced Dashboard', icon: BarChart3 },
+    { path: '/rps', label: 'RPS 排名', icon: TrendingUp },
     { path: '/tanstack', label: 'TanStack Demo', icon: BarChart3 },
     { path: '/portfolio', label: 'Portfolio', icon: User },
     { path: '/settings', label: 'Settings', icon: Settings },
