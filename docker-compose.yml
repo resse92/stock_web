@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  stock-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '40006:80'
+    restart: unless-stopped
