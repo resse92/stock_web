@@ -4,11 +4,17 @@ FROM node:20-alpine AS builder
 # 设置工作目录
 WORKDIR /app
 
-# 复制package文件
-COPY package*.json pnpm-lock.yaml ./
+# 设置npm镜像源为淘宝镜像
+RUN npm config set registry https://registry.npmmirror.com
 
 # 安装pnpm
 RUN npm install -g pnpm
+
+# 设置pnpm镜像源为淘宝镜像
+RUN pnpm config set registry https://registry.npmmirror.com
+
+# 复制package文件
+COPY package*.json pnpm-lock.yaml ./
 
 # 安装依赖
 RUN pnpm install --frozen-lockfile
