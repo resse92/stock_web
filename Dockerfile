@@ -1,5 +1,5 @@
 # 多阶段构建 - 构建阶段
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 # 设置工作目录
 WORKDIR /app
@@ -7,23 +7,21 @@ WORKDIR /app
 # 设置npm镜像源为淘宝镜像
 RUN npm config set registry https://registry.npmmirror.com
 
-# 安装pnpm
-RUN npm install -g pnpm
-
-# 设置pnpm镜像源为淘宝镜像
-RUN pnpm config set registry https://registry.npmmirror.com
-
 # 复制package文件
-COPY package*.json pnpm-lock.yaml ./
+COPY package*.json ./
 
 # 安装依赖
-RUN pnpm install --frozen-lockfile
+RUN npm ci --silent
 
 # 复制源代码
 COPY . .
 
 # 构建应用
-RUN pnpm run build
+RUN npm run build
+
+# 清理缓存和依赖
+RUN npm cache clean --force
+RUN rm -rf node_modules
 
 # 生产阶段 - 使用Nginx提供静态文件
 FROM nginx:alpine AS production
