@@ -4,6 +4,7 @@ import { Dashboard } from '@/components/Dashboard'
 import { RPSPage } from '@/components/rps/Page'
 import { StockDashboardAdvanced } from '@/components/StockDashboardAdvanced'
 import { NotFound } from '@/components/NotFound'
+import { Toaster } from '@/components/ui/toaster'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/advanced" element={<StockDashboardAdvanced />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <Toaster />
       </Router>
     </SidebarProviderZustand>
   )

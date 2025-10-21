@@ -12,15 +12,35 @@ import { Card, CardContent } from '@/components/ui/card'
 import { generateLargeStockDataset } from '@/utils/demoData'
 import { formatCurrency, formatMarketCap, formatVolume } from '@/utils/mockData'
 import type { StockData } from '@/types/stock'
-import { TrendingUp, TrendingDown } from 'lucide-react'
+import { TrendingUp, TrendingDown, Loader2 } from 'lucide-react'
 
 const columnHelper = createColumnHelper<StockData>()
 
-export const RPSTable: React.FC = () => {
+interface RPSTableProps {
+  data?: StockData[]
+  loading?: boolean
+  error?: string | null
+}
+
+export const RPSTable: React.FC<RPSTableProps> = ({
+  data: propData,
+  loading = false,
+  error = null,
+}) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
 
-  // Generate large dataset for demonstration
-  const data = useMemo(() => generateLargeStockDataset(5000), [])
+  // Use prop data directly, no fallback to demo data
+  const tableData = useMemo(() => {
+    if (propData && propData.length > 0) {
+      // TODO: 这里需要处理RPS数据
+      // 1. 验证数据格式是否符合RPS要求
+      // 2. 添加RPS相关字段到表格列定义
+      // 3. 处理RPS数据的排序和显示
+      return propData
+    }
+    // Return empty array when no data
+    return []
+  }, [propData])
 
   const columns = useMemo(
     () => [
@@ -113,7 +133,7 @@ export const RPSTable: React.FC = () => {
   )
 
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
     state: {
       sorting,
@@ -135,17 +155,57 @@ export const RPSTable: React.FC = () => {
     overscan: 10,
   })
 
+  // Show loading state
+  if (loading) {
+    return (
+      <Card className="w-full">
+        <CardContent className="p-8">
+          <div className="flex items-center justify-center space-x-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>正在加载RPS数据...</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Card className="w-full">
+        <CardContent className="p-8">
+          <div className="flex items-center justify-center text-red-600">
+            <span>{error}</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // Show empty state when no data
+  if (!loading && tableData.length === 0) {
+    return (
+      <Card className="w-full">
+        <CardContent className="p-8">
+          <div className="flex items-center justify-center text-muted-foreground">
+            <span>暂无数据，请调整筛选条件后重试</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card className="w-full">
       {/* <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>TanStack Table + React Virtual Demo</span>
           <span className="text-sm text-muted-foreground font-normal">
-            {data.length.toLocaleString()} rows
+            {tableData.length.toLocaleString()} rows
           </span>
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Virtualized table with {data.length.toLocaleString()} stock records. 
+          Virtualized table with {tableData.length.toLocaleString()} stock records. 
           Click column headers to sort.
         </p>
       </CardHeader> */}

@@ -201,6 +201,9 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
     onFiltersChange?.(filters)
   }
 
+  // 移除自动触发，改为手动触发
+  // 用户需要点击"确认"按钮才会触发请求
+
   return (
     <div className="flex flex-col flex-wrap items-stretch gap-4">
       {/* RPS 筛选器 */}
