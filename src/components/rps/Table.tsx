@@ -9,10 +9,8 @@ import {
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { Card, CardContent } from '@/components/ui/card'
-import { generateLargeStockDataset } from '@/utils/demoData'
-import { formatCurrency, formatMarketCap, formatVolume } from '@/utils/mockData'
 import type { RpsItemData } from '@/types/stock'
-import { TrendingUp, TrendingDown, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 const columnHelper = createColumnHelper<RpsItemData>()
 
@@ -32,10 +30,6 @@ export const RPSTable: React.FC<RPSTableProps> = ({
   // Use prop data directly, no fallback to demo data
   const tableData = useMemo(() => {
     if (propData && propData.length > 0) {
-      // TODO: 这里需要处理RPS数据
-      // 1. 验证数据格式是否符合RPS要求
-      // 2. 添加RPS相关字段到表格列定义
-      // 3. 处理RPS数据的排序和显示
       return propData
     }
     // Return empty array when no data
@@ -52,13 +46,13 @@ export const RPSTable: React.FC<RPSTableProps> = ({
         size: 100,
       }),
       columnHelper.accessor('name', {
-        header: 'Company Name',
+        header: '公司',
         cell: (info) => (
           <div className="truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
         ),
-        size: 250,
+        size: 100,
       }),
       columnHelper.accessor('rps3', {
         header: 'RPS3',
@@ -67,7 +61,7 @@ export const RPSTable: React.FC<RPSTableProps> = ({
             {info.getValue().toFixed(2)}
           </div>
         ),
-        size: 120,
+        size: 100,
       }),
       columnHelper.accessor('rps5', {
         header: 'RPS5',
@@ -78,7 +72,7 @@ export const RPSTable: React.FC<RPSTableProps> = ({
           </div>
           )
         },
-        size: 140,
+        size: 100,
       }),
       columnHelper.accessor('rps15', {
         header: 'RPS15',
@@ -89,7 +83,7 @@ export const RPSTable: React.FC<RPSTableProps> = ({
           </div>
           )
         },
-        size: 120,
+        size: 100,
       }),
       columnHelper.accessor('rps30', {
         header: 'RPS30',
@@ -98,7 +92,7 @@ export const RPSTable: React.FC<RPSTableProps> = ({
             {info.getValue().toFixed(2)}
           </div>
         ),
-        size: 120,
+        size: 100,
       }),
       columnHelper.accessor('listed_days', {
         header: '上市天数',
@@ -107,7 +101,7 @@ export const RPSTable: React.FC<RPSTableProps> = ({
             {info.getValue().toFixed(2)}
           </div>
         ),
-        size: 140,
+        size: 100,
       }),
       columnHelper.accessor('market_cap', {
         header: '市值(亿)',
@@ -116,7 +110,7 @@ export const RPSTable: React.FC<RPSTableProps> = ({
             {info.getValue()}
           </div>
         ),
-        size: 140,
+        size: 100,
       }),
       columnHelper.accessor('circulating_market_cap', {
         header: '流通市值(亿)',
@@ -125,7 +119,7 @@ export const RPSTable: React.FC<RPSTableProps> = ({
             {info.getValue()}
           </div>
         ),
-        size: 140,
+        size: 100,
       }),
     ],
     []
@@ -196,72 +190,57 @@ export const RPSTable: React.FC<RPSTableProps> = ({
 
   return (
     <Card className="w-full">
-      {/* <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>TanStack Table + React Virtual Demo</span>
-          <span className="text-sm text-muted-foreground font-normal">
-            {tableData.length.toLocaleString()} rows
-          </span>
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Virtualized table with {tableData.length.toLocaleString()} stock records. 
-          Click column headers to sort.
-        </p>
-      </CardHeader> */}
       <CardContent className="p-0">
         <div className="relative">
-          {/* Fixed Header */}
-          <div className="sticky top-0 z-20 bg-background border-b">
-            <table
-              className="w-full text-sm"
-              style={{ tableLayout: 'fixed', width: '100%' }}
-            >
-              <colgroup>
-                <col style={{ width: '100px' }} />
-                <col style={{ width: '250px' }} />
-                <col style={{ width: '120px' }} />
-                <col style={{ width: '140px' }} />
-                <col style={{ width: '120px' }} />
-                <col style={{ width: '120px' }} />
-                <col style={{ width: '140px' }} />
-              </colgroup>
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        className="px-3 py-3 text-left bg-muted/50 border-r border-border/50"
-                      >
-                        {header.isPlaceholder ? null : (
-                          <div
-                            {...{
-                              className: header.column.getCanSort()
-                                ? 'cursor-pointer select-none flex items-center'
-                                : '',
-                              onClick: header.column.getToggleSortingHandler(),
-                            }}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                            {{
-                              asc: ' 🔼',
-                              desc: ' 🔽',
-                            }[header.column.getIsSorted() as string] ?? null}
-                          </div>
-                        )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-            </table>
-          </div>
+          {/* 统一的滚动容器，包含Header和Body */}
+          <div ref={parentRef} className="h-[600px] overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            {/* Fixed Header - 现在在滚动容器内部 */}
+            <div className="sticky top-0 z-20 bg-background border-b">
+              <table
+                className="w-full text-sm"
+                style={{ tableLayout: 'fixed', width: '100%' }}
+              >
+                <colgroup>
+                  {columns.map((column) => (
+                    <col key={column.id} style={{ width: `${column.size || 100}px` }} />
+                  ))}
+                </colgroup>
+                <thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <th
+                          key={header.id}
+                          className="px-3 py-3 text-left bg-muted/50 border-r border-border/50 bg-gray-100"
+                        >
+                          {header.isPlaceholder ? null : (
+                            <div
+                              {...{
+                                className: header.column.getCanSort()
+                                  ? 'cursor-pointer select-none flex items-center'
+                                  : '',
+                                onClick: header.column.getToggleSortingHandler(),
+                              }}
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                              {{
+                                asc: ' 🔼',
+                                desc: ' 🔽',
+                              }[header.column.getIsSorted() as string] ?? null}
+                            </div>
+                          )}
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </thead>
+              </table>
+            </div>
 
-          {/* Scrollable Body */}
-          <div ref={parentRef} className="h-[600px] overflow-auto">
+            {/* Scrollable Body */}
             <div
               style={{
                 height: `${virtualizer.getTotalSize()}px`,
@@ -273,13 +252,9 @@ export const RPSTable: React.FC<RPSTableProps> = ({
                 style={{ tableLayout: 'fixed', width: '100%' }}
               >
                 <colgroup>
-                  <col style={{ width: '100px' }} />
-                  <col style={{ width: '250px' }} />
-                  <col style={{ width: '120px' }} />
-                  <col style={{ width: '140px' }} />
-                  <col style={{ width: '120px' }} />
-                  <col style={{ width: '120px' }} />
-                  <col style={{ width: '140px' }} />
+                  {columns.map((column) => (
+                    <col key={column.id} style={{ width: `${column.size || 100}px` }} />
+                  ))}
                 </colgroup>
                 <tbody>
                   {virtualizer.getVirtualItems().map((virtualRow) => {
@@ -304,9 +279,9 @@ export const RPSTable: React.FC<RPSTableProps> = ({
                             key={cell.id}
                             className="px-3 py-3 border-r border-border/50"
                             style={{
-                              width: cell.column.getSize() + 'px',
-                              minWidth: cell.column.getSize() + 'px',
-                              maxWidth: cell.column.getSize() + 'px',
+                              width: `${cell.column.getSize()}px`,
+                              minWidth: `${cell.column.getSize()}px`,
+                              maxWidth: `${cell.column.getSize()}px`,
                             }}
                           >
                             {flexRender(

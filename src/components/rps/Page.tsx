@@ -17,8 +17,6 @@ export const RPSPage: React.FC = () => {
 
   const handleFiltersChange = React.useCallback(
     async (filters: RPSFilterValues) => {
-      console.log('筛选条件变化:', filters)
-
       // 转换筛选条件为API格式
       const rpsFilter: RpsFilter = {
         rps3: filters.rps3.enabled ? { min: filters.rps3.min, max: filters.rps3.max } : undefined,
