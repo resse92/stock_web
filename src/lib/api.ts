@@ -3,6 +3,7 @@ import type {
   RpsItemData,
   ChartData,
   StockQuote,
+  StockData,
 } from '@/types/stock'
 import type { StockApiEndpoints, RpsFilter } from '@/types/api'
 import { httpClient } from './http-client'
@@ -47,9 +48,9 @@ class StockApiService {
   /**
    * Get all stocks
    */
-  public async getStocks(): Promise<RpsItemData[]> {
+  public async getStocks(): Promise<StockData[]> {
     try {
-      const response = await httpClient.get<RpsItemData[]>(
+      const response = await httpClient.get<StockData[]>(
         this.endpoints.getStocks()
       )
       return response.data
@@ -66,9 +67,9 @@ class StockApiService {
   /**
    * Get single stock by symbol
    */
-  public async getStock(symbol: string): Promise<RpsItemData> {
+  public async getStock(symbol: string): Promise<StockData> {
     try {
-      const response = await httpClient.get<RpsItemData>(
+      const response = await httpClient.get<StockData>(
         this.endpoints.getStock(symbol)
       )
       return response.data
@@ -80,6 +81,7 @@ class StockApiService {
         if (mockStock) {
           return mockStock
         }
+        throw new Error(`Stock ${symbol} not found`)
       }
       throw error
     }
