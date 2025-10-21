@@ -1,4 +1,9 @@
-import type {ApiResponse, RpsItemData, ChartData, StockQuote } from '@/types/stock'
+import type {
+  ApiResponse,
+  RpsItemData,
+  ChartData,
+  StockQuote,
+} from '@/types/stock'
 import type { StockApiEndpoints, RpsFilter } from '@/types/api'
 import { httpClient } from './http-client'
 import { mockStockData, generateChartData } from '@/utils/mockData'
@@ -30,10 +35,10 @@ class StockApiService {
         url += `&rps30=(${filter.rps30.min},${filter.rps30.max})`
       }
       if (filter.marketCap) {
-        url += `&marketCap=${filter.marketCap}`
+        url += `&circulating_market_cap=(${filter.marketCap},)`
       }
       if (filter.listingDays) {
-        url += `&listingDays=${filter.listingDays}`
+        url += `&listed_days=(${filter.listingDays},)`
       }
       return url
     },
