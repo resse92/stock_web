@@ -26,12 +26,12 @@ export interface RequestOptions {
 }
 
 export interface RpsFilter {
-  rps3: { min: number; max: number }
-  rps5: { min: number; max: number }
-  rps15: { min: number; max: number }
-  rps30: { min: number; max: number }
-  marketCap: number
-  listingDays: number
+  rps3?: { min?: number; max?: number }
+  rps5?: { min?: number; max?: number }
+  rps15?: { min?: number; max?: number }
+  rps30?: { min?: number; max?: number }
+  marketCap?: number
+  listingDays?: number
 }
 
 // Stock API Endpoints

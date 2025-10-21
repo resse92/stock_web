@@ -1,4 +1,4 @@
-import type { StockData, ChartData, StockQuote } from '@/types/stock'
+import type {ApiResponse, RpsItemData, ChartData, StockQuote } from '@/types/stock'
 import type { StockApiEndpoints, RpsFilter } from '@/types/api'
 import { httpClient } from './http-client'
 import { mockStockData, generateChartData } from '@/utils/mockData'
@@ -15,16 +15,36 @@ class StockApiService {
     getHistoricalData: (symbol: string, period = '1M') =>
       `/api/stocks/${symbol}/historical?period=${period}`,
     getQuote: (symbol: string) => `/api/stocks/${symbol}/quote`,
-    getRps: (date: string, filter: RpsFilter) =>
-      `/api/v1/joinquant/rps?date=${date}&rps3=(${filter.rps3.min},${filter.rps3.max})&rps5=(${filter.rps5.min},${filter.rps5.max})&rps15=(${filter.rps15.min},${filter.rps15.max})&rps30=(${filter.rps30.min},${filter.rps30.max})&marketCap=${filter.marketCap}&listingDays=${filter.listingDays}`,
+    getRps: (date: string, filter: RpsFilter) => {
+      let url = `/api/v1/joinquant/rps?date=${date}`
+      if (filter.rps3) {
+        url += `&rps3=(${filter.rps3.min},${filter.rps3.max})`
+      }
+      if (filter.rps5) {
+        url += `&rps5=(${filter.rps5.min},${filter.rps5.max})`
+      }
+      if (filter.rps15) {
+        url += `&rps15=(${filter.rps15.min},${filter.rps15.max})`
+      }
+      if (filter.rps30) {
+        url += `&rps30=(${filter.rps30.min},${filter.rps30.max})`
+      }
+      if (filter.marketCap) {
+        url += `&marketCap=${filter.marketCap}`
+      }
+      if (filter.listingDays) {
+        url += `&listingDays=${filter.listingDays}`
+      }
+      return url
+    },
   }
 
   /**
    * Get all stocks
    */
-  public async getStocks(): Promise<StockData[]> {
+  public async getStocks(): Promise<RpsItemData[]> {
     try {
-      const response = await httpClient.get<StockData[]>(
+      const response = await httpClient.get<RpsItemData[]>(
         this.endpoints.getStocks()
       )
       return response.data
@@ -41,9 +61,9 @@ class StockApiService {
   /**
    * Get single stock by symbol
    */
-  public async getStock(symbol: string): Promise<StockData> {
+  public async getStock(symbol: string): Promise<RpsItemData> {
     try {
-      const response = await httpClient.get<StockData>(
+      const response = await httpClient.get<RpsItemData>(
         this.endpoints.getStock(symbol)
       )
       return response.data
@@ -132,11 +152,11 @@ class StockApiService {
   /**
    * Get RPS data with filters
    */
-  public async getRps(date: string, filter: RpsFilter): Promise<StockData[]> {
-    const response = await httpClient.get<StockData[]>(
+  public async getRps(date: string, filter: RpsFilter): Promise<RpsItemData[]> {
+    const response = await httpClient.get<ApiResponse<RpsItemData[]>>(
       this.endpoints.getRps(date, filter)
     )
-    return response.data
+    return response.data.data
   }
 }
 

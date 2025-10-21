@@ -11,13 +11,13 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { Card, CardContent } from '@/components/ui/card'
 import { generateLargeStockDataset } from '@/utils/demoData'
 import { formatCurrency, formatMarketCap, formatVolume } from '@/utils/mockData'
-import type { StockData } from '@/types/stock'
+import type { RpsItemData } from '@/types/stock'
 import { TrendingUp, TrendingDown, Loader2 } from 'lucide-react'
 
-const columnHelper = createColumnHelper<StockData>()
+const columnHelper = createColumnHelper<RpsItemData>()
 
 interface RPSTableProps {
-  data?: StockData[]
+  data?: RpsItemData[]
   loading?: boolean
   error?: string | null
 }
@@ -44,8 +44,8 @@ export const RPSTable: React.FC<RPSTableProps> = ({
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('symbol', {
-        header: 'Symbol',
+      columnHelper.accessor('code', {
+        header: 'Code',
         cell: (info) => (
           <div className="font-semibold text-primary">{info.getValue()}</div>
         ),
@@ -60,70 +60,69 @@ export const RPSTable: React.FC<RPSTableProps> = ({
         ),
         size: 250,
       }),
-      columnHelper.accessor('price', {
-        header: 'Price',
+      columnHelper.accessor('rps3', {
+        header: 'RPS3',
         cell: (info) => (
-          <div className="font-mono text-right">
-            {formatCurrency(info.getValue())}
+          <div className="truncate" title={info.getValue().toFixed(2)}>
+            {info.getValue().toFixed(2)}
           </div>
         ),
         size: 120,
       }),
-      columnHelper.accessor('change', {
-        header: 'Change',
+      columnHelper.accessor('rps5', {
+        header: 'RPS5',
         cell: (info) => {
-          const value = info.getValue()
-          const isPositive = value >= 0
           return (
-            <div
-              className={`flex items-center justify-end font-mono ${
-                isPositive ? 'text-green-600' : 'text-red-600'
-              }`}
-            >
-              {isPositive ? (
-                <TrendingUp className="h-3 w-3 mr-1" />
-              ) : (
-                <TrendingDown className="h-3 w-3 mr-1" />
-              )}
-              {isPositive ? '+' : ''}
-              {formatCurrency(value)}
-            </div>
+            <div className="truncate" title={info.getValue().toFixed(2)}>
+            {info.getValue().toFixed(2)}
+          </div>
           )
         },
         size: 140,
       }),
-      columnHelper.accessor('changePercent', {
-        header: 'Change %',
+      columnHelper.accessor('rps15', {
+        header: 'RPS15',
         cell: (info) => {
-          const value = info.getValue()
-          const isPositive = value >= 0
           return (
-            <div
-              className={`font-mono text-right ${
-                isPositive ? 'text-green-600' : 'text-red-600'
-              }`}
-            >
-              {isPositive ? '+' : ''}
-              {value.toFixed(2)}%
-            </div>
+            <div className="truncate" title={info.getValue().toFixed(2)}>
+            {info.getValue().toFixed(2)}
+          </div>
           )
         },
         size: 120,
       }),
-      columnHelper.accessor('volume', {
-        header: 'Volume',
+      columnHelper.accessor('rps30', {
+        header: 'RPS30',
         cell: (info) => (
-          <div className="font-mono text-right">
-            {formatVolume(info.getValue())}
+          <div className="font-mono">
+            {info.getValue().toFixed(2)}
           </div>
         ),
         size: 120,
       }),
-      columnHelper.accessor('marketCap', {
-        header: 'Market Cap',
+      columnHelper.accessor('listed_days', {
+        header: '上市天数',
         cell: (info) => (
-          <div className="font-mono text-right">
-            {formatMarketCap(info.getValue())}
+          <div className="font-mono">
+            {info.getValue().toFixed(2)}
+          </div>
+        ),
+        size: 140,
+      }),
+      columnHelper.accessor('market_cap', {
+        header: '市值(亿)',
+        cell: (info) => (
+          <div className="font-mono">
+            {info.getValue()}
+          </div>
+        ),
+        size: 140,
+      }),
+      columnHelper.accessor('circulating_market_cap', {
+        header: '流通市值(亿)',
+        cell: (info) => (
+          <div className="font-mono">
+            {info.getValue()}
           </div>
         ),
         size: 140,

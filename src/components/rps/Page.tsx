@@ -4,13 +4,13 @@ import { Header } from '../Header'
 import { useSidebarZustand } from '@/contexts/SidebarContextZustand'
 import RPSFilters, { type RPSFilterValues } from './RPSFilters'
 import { stockApi } from '@/lib/api'
-import type { StockData } from '@/types/stock'
+import type { RpsItemData } from '@/types/stock'
 import type { RpsFilter } from '@/types/api'
 import { useToast } from '@/hooks/use-toast'
 
 export const RPSPage: React.FC = () => {
   const { isCollapsed } = useSidebarZustand()
-  const [rpsData, setRpsData] = useState<StockData[]>([])
+  const [rpsData, setRpsData] = useState<RpsItemData[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
@@ -21,10 +21,10 @@ export const RPSPage: React.FC = () => {
 
       // 转换筛选条件为API格式
       const rpsFilter: RpsFilter = {
-        rps3: { min: filters.rps3.min, max: filters.rps3.max },
-        rps5: { min: filters.rps5.min, max: filters.rps5.max },
-        rps15: { min: filters.rps15.min, max: filters.rps15.max },
-        rps30: { min: filters.rps30.min, max: filters.rps30.max },
+        rps3: filters.rps3.enabled ? { min: filters.rps3.min, max: filters.rps3.max } : undefined,
+        rps5: filters.rps5.enabled ? { min: filters.rps5.min, max: filters.rps5.max } : undefined,
+        rps15: filters.rps15.enabled ? { min: filters.rps15.min, max: filters.rps15.max } : undefined,
+        rps30: filters.rps30.enabled ? { min: filters.rps30.min, max: filters.rps30.max } : undefined,
         marketCap: filters.marketCap,
         listingDays: filters.listingDays,
       }
@@ -33,18 +33,9 @@ export const RPSPage: React.FC = () => {
         setLoading(true)
         setError(null)
 
-        // TODO: 这里需要根据筛选条件中的enabled状态来构建正确的API请求
-        // 目前API接口需要所有RPS参数，但筛选器中有enabled状态控制
-        // 需要处理以下逻辑：
-        // 1. 只传递enabled=true的RPS条件给API
-        // 2. 对于disabled的RPS条件，可能需要传递默认范围或忽略
         const data = await stockApi.getRps(filters.date, rpsFilter)
+        console.log(data)
 
-        // TODO: 根据筛选条件处理返回的数据
-        // 1. 客户端过滤：根据enabled状态过滤数据
-        // 2. 应用市值和上市天数筛选（如果API没有处理）
-        // 3. 数据排序和格式化
-        // 4. 添加RPS相关字段到表格显示
         setRpsData(data)
       } catch (err) {
         console.error('获取RPS数据失败:', err)
