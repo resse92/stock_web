@@ -5,6 +5,7 @@ import { RPSPage } from '@/components/rps/Page'
 import { StockDashboardAdvanced } from '@/components/StockDashboardAdvanced'
 import { NotFound } from '@/components/NotFound'
 import { Toaster } from '@/components/ui/toaster'
+import { WebResearchPage } from '@/components/deepseek/WebResearchPage'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/tanstack" element={<RPSPage />} />
           <Route path="/advanced" element={<StockDashboardAdvanced />} />
+          <Route path="/web-research" element={<WebResearchPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />

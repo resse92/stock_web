@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Crown,
   Flame,
+  Globe2,
 } from 'lucide-react'
 
 export const Header = () => {
@@ -19,6 +20,7 @@ export const Header = () => {
     { path: '/', label: 'Dashboard', icon: Home },
     { path: '/advanced', label: '市场情绪', icon: Flame },
     { path: '/tanstack', label: 'RPS', icon: Crown },
+    { path: '/web-research', label: '网页调研', icon: Globe2 },
     // { path: '/portfolio', label: 'Portfolio', icon: User },
     // { path: '/settings', label: 'Settings', icon: Settings },
   ]
