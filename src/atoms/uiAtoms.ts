@@ -39,12 +39,9 @@ export const loadingAtom = atom<UIState['isLoading']>(initialUIState.isLoading)
 export const modalsAtom = atom<UIState['modals']>(initialUIState.modals)
 
 // Derived/action atoms
-export const toggleSidebarAtom = atom(
-  null,
-  (get, set) => {
-    set(sidebarCollapsedAtom, !get(sidebarCollapsedAtom))
-  }
-)
+export const toggleSidebarAtom = atom(null, (get, set) => {
+  set(sidebarCollapsedAtom, !get(sidebarCollapsedAtom))
+})
 
 export const setSidebarCollapsedAtom = atom(
   null,
@@ -53,12 +50,9 @@ export const setSidebarCollapsedAtom = atom(
   }
 )
 
-export const setThemeAtom = atom(
-  null,
-  (_get, set, theme: UIState['theme']) => {
-    set(themeAtom, theme)
-  }
-)
+export const setThemeAtom = atom(null, (_get, set, theme: UIState['theme']) => {
+  set(themeAtom, theme)
+})
 
 export const setLoadingAtom = atom(
   null,
@@ -97,7 +91,7 @@ export const closeModalAtom = atom(
 )
 
 // Combined UI state atom (for compatibility)
-export const uiStateAtom = atom((get) => ({
+export const uiStateAtom = atom(get => ({
   isSidebarCollapsed: get(sidebarCollapsedAtom),
   theme: get(themeAtom),
   isLoading: get(loadingAtom),

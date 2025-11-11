@@ -38,42 +38,38 @@ export const userSettingsAtom = atomWithStorage<UserState['settings']>(
   initialUserState.settings
 )
 
-export const viewPreferencesAtom = atomWithStorage<UserState['viewPreferences']>(
-  'stock-web-view-preferences',
-  initialUserState.viewPreferences
-)
+export const viewPreferencesAtom = atomWithStorage<
+  UserState['viewPreferences']
+>('stock-web-view-preferences', initialUserState.viewPreferences)
 
 // Action atoms - Watchlist
-export const addToWatchlistAtom = atom(
-  null,
-  (get, set, symbol: string) => {
-    const current = get(watchlistAtom)
-    if (!current.includes(symbol)) {
-      set(watchlistAtom, [...current, symbol])
-    }
+export const addToWatchlistAtom = atom(null, (get, set, symbol: string) => {
+  const current = get(watchlistAtom)
+  if (!current.includes(symbol)) {
+    set(watchlistAtom, [...current, symbol])
   }
-)
+})
 
 export const removeFromWatchlistAtom = atom(
   null,
   (get, set, symbol: string) => {
-    set(watchlistAtom, get(watchlistAtom).filter((s) => s !== symbol))
+    set(
+      watchlistAtom,
+      get(watchlistAtom).filter(s => s !== symbol)
+    )
   }
 )
 
-export const setWatchlistAtom = atom(
-  null,
-  (_get, set, symbols: string[]) => {
-    set(watchlistAtom, symbols)
-  }
-)
+export const setWatchlistAtom = atom(null, (_get, set, symbols: string[]) => {
+  set(watchlistAtom, symbols)
+})
 
 // Action atoms - Portfolio
 export const addToPortfolioAtom = atom(
   null,
   (get, set, symbol: string, shares: number, avgPrice: number) => {
     const current = get(portfolioAtom)
-    const existingIndex = current.findIndex((p) => p.symbol === symbol)
+    const existingIndex = current.findIndex(p => p.symbol === symbol)
 
     if (existingIndex >= 0) {
       // Update existing position
@@ -101,7 +97,7 @@ export const updatePortfolioPositionAtom = atom(
   (get, set, symbol: string, shares: number, avgPrice: number) => {
     set(
       portfolioAtom,
-      get(portfolioAtom).map((p) =>
+      get(portfolioAtom).map(p =>
         p.symbol === symbol ? { ...p, shares, avgPrice } : p
       )
     )
@@ -111,7 +107,10 @@ export const updatePortfolioPositionAtom = atom(
 export const removeFromPortfolioAtom = atom(
   null,
   (get, set, symbol: string) => {
-    set(portfolioAtom, get(portfolioAtom).filter((p) => p.symbol !== symbol))
+    set(
+      portfolioAtom,
+      get(portfolioAtom).filter(p => p.symbol !== symbol)
+    )
   }
 )
 
@@ -142,18 +141,15 @@ export const updateViewPreferencesAtom = atom(
 )
 
 // Action atoms - Favorites
-export const addToFavoritesAtom = atom(
-  null,
-  (get, set, symbol: string) => {
-    const current = get(userSettingsAtom)
-    if (!current.favoriteSymbols.includes(symbol)) {
-      set(userSettingsAtom, {
-        ...current,
-        favoriteSymbols: [...current.favoriteSymbols, symbol],
-      })
-    }
+export const addToFavoritesAtom = atom(null, (get, set, symbol: string) => {
+  const current = get(userSettingsAtom)
+  if (!current.favoriteSymbols.includes(symbol)) {
+    set(userSettingsAtom, {
+      ...current,
+      favoriteSymbols: [...current.favoriteSymbols, symbol],
+    })
   }
-)
+})
 
 export const removeFromFavoritesAtom = atom(
   null,
@@ -161,13 +157,13 @@ export const removeFromFavoritesAtom = atom(
     const current = get(userSettingsAtom)
     set(userSettingsAtom, {
       ...current,
-      favoriteSymbols: current.favoriteSymbols.filter((s) => s !== symbol),
+      favoriteSymbols: current.favoriteSymbols.filter(s => s !== symbol),
     })
   }
 )
 
 // Combined user state atom (for compatibility)
-export const userStateAtom = atom((get) => ({
+export const userStateAtom = atom(get => ({
   watchlist: get(watchlistAtom),
   portfolio: get(portfolioAtom),
   settings: get(userSettingsAtom),

@@ -40,14 +40,14 @@ export const RPSTable: React.FC<RPSTableProps> = ({
     () => [
       columnHelper.accessor('code', {
         header: 'Code',
-        cell: (info) => (
+        cell: info => (
           <div className="font-semibold text-primary">{info.getValue()}</div>
         ),
         size: 100,
       }),
       columnHelper.accessor('name', {
         header: '公司',
-        cell: (info) => (
+        cell: info => (
           <div className="truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
@@ -56,7 +56,7 @@ export const RPSTable: React.FC<RPSTableProps> = ({
       }),
       columnHelper.accessor('rps3', {
         header: 'RPS3',
-        cell: (info) => (
+        cell: info => (
           <div className="truncate" title={info.getValue().toFixed(2)}>
             {info.getValue().toFixed(2)}
           </div>
@@ -65,60 +65,48 @@ export const RPSTable: React.FC<RPSTableProps> = ({
       }),
       columnHelper.accessor('rps5', {
         header: 'RPS5',
-        cell: (info) => {
+        cell: info => {
           return (
             <div className="truncate" title={info.getValue().toFixed(2)}>
-            {info.getValue().toFixed(2)}
-          </div>
+              {info.getValue().toFixed(2)}
+            </div>
           )
         },
         size: 100,
       }),
       columnHelper.accessor('rps15', {
         header: 'RPS15',
-        cell: (info) => {
+        cell: info => {
           return (
             <div className="truncate" title={info.getValue().toFixed(2)}>
-            {info.getValue().toFixed(2)}
-          </div>
+              {info.getValue().toFixed(2)}
+            </div>
           )
         },
         size: 100,
       }),
       columnHelper.accessor('rps30', {
         header: 'RPS30',
-        cell: (info) => (
-          <div className="font-mono">
-            {info.getValue().toFixed(2)}
-          </div>
+        cell: info => (
+          <div className="font-mono">{info.getValue().toFixed(2)}</div>
         ),
         size: 100,
       }),
       columnHelper.accessor('listed_days', {
         header: '上市天数',
-        cell: (info) => (
-          <div className="font-mono">
-            {info.getValue().toFixed(2)}
-          </div>
+        cell: info => (
+          <div className="font-mono">{info.getValue().toFixed(2)}</div>
         ),
         size: 100,
       }),
       columnHelper.accessor('market_cap', {
         header: '市值(亿)',
-        cell: (info) => (
-          <div className="font-mono">
-            {info.getValue()}
-          </div>
-        ),
+        cell: info => <div className="font-mono">{info.getValue()}</div>,
         size: 100,
       }),
       columnHelper.accessor('circulating_market_cap', {
         header: '流通市值(亿)',
-        cell: (info) => (
-          <div className="font-mono">
-            {info.getValue()}
-          </div>
-        ),
+        cell: info => <div className="font-mono">{info.getValue()}</div>,
         size: 100,
       }),
     ],
@@ -193,7 +181,10 @@ export const RPSTable: React.FC<RPSTableProps> = ({
       <CardContent className="p-0">
         <div className="relative">
           {/* 统一的滚动容器，包含Header和Body */}
-          <div ref={parentRef} className="h-[600px] overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <div
+            ref={parentRef}
+            className="h-[600px] overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+          >
             {/* Fixed Header - 现在在滚动容器内部 */}
             <div className="sticky top-0 z-20 bg-background border-b">
               <table
@@ -201,14 +192,17 @@ export const RPSTable: React.FC<RPSTableProps> = ({
                 style={{ tableLayout: 'fixed', width: '100%' }}
               >
                 <colgroup>
-                  {columns.map((column) => (
-                    <col key={column.id} style={{ width: `${column.size || 100}px` }} />
+                  {columns.map(column => (
+                    <col
+                      key={column.id}
+                      style={{ width: `${column.size || 100}px` }}
+                    />
                   ))}
                 </colgroup>
                 <thead>
-                  {table.getHeaderGroups().map((headerGroup) => (
+                  {table.getHeaderGroups().map(headerGroup => (
                     <tr key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => (
+                      {headerGroup.headers.map(header => (
                         <th
                           key={header.id}
                           className="px-3 py-3 text-left bg-muted/50 border-r border-border/50 bg-gray-100"
@@ -219,7 +213,8 @@ export const RPSTable: React.FC<RPSTableProps> = ({
                                 className: header.column.getCanSort()
                                   ? 'cursor-pointer select-none flex items-center'
                                   : '',
-                                onClick: header.column.getToggleSortingHandler(),
+                                onClick:
+                                  header.column.getToggleSortingHandler(),
                               }}
                             >
                               {flexRender(
@@ -252,12 +247,15 @@ export const RPSTable: React.FC<RPSTableProps> = ({
                 style={{ tableLayout: 'fixed', width: '100%' }}
               >
                 <colgroup>
-                  {columns.map((column) => (
-                    <col key={column.id} style={{ width: `${column.size || 100}px` }} />
+                  {columns.map(column => (
+                    <col
+                      key={column.id}
+                      style={{ width: `${column.size || 100}px` }}
+                    />
                   ))}
                 </colgroup>
                 <tbody>
-                  {virtualizer.getVirtualItems().map((virtualRow) => {
+                  {virtualizer.getVirtualItems().map(virtualRow => {
                     const row = rows[virtualRow.index]
                     return (
                       <tr
@@ -274,7 +272,7 @@ export const RPSTable: React.FC<RPSTableProps> = ({
                           tableLayout: 'fixed',
                         }}
                       >
-                        {row.getVisibleCells().map((cell) => (
+                        {row.getVisibleCells().map(cell => (
                           <td
                             key={cell.id}
                             className="px-3 py-3 border-r border-border/50"

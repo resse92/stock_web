@@ -77,7 +77,7 @@ class StockApiService {
       // Fallback to mock data
       if (config.isDevelopment) {
         console.warn(`API unavailable for ${symbol}, using mock data:`, error)
-        const mockStock = mockStockData.find((stock) => stock.symbol === symbol)
+        const mockStock = mockStockData.find(stock => stock.symbol === symbol)
         if (mockStock) {
           return mockStock
         }
@@ -128,7 +128,7 @@ class StockApiService {
           `API unavailable for ${symbol} quote, using mock data:`,
           error
         )
-        const mockStock = mockStockData.find((stock) => stock.symbol === symbol)
+        const mockStock = mockStockData.find(stock => stock.symbol === symbol)
         if (mockStock) {
           return {
             symbol: mockStock.symbol,
@@ -148,7 +148,7 @@ class StockApiService {
    */
   public async getMultipleQuotes(symbols: string[]): Promise<StockQuote[]> {
     try {
-      const promises = symbols.map((symbol) => this.getQuote(symbol))
+      const promises = symbols.map(symbol => this.getQuote(symbol))
       return await Promise.all(promises)
     } catch (error) {
       console.error('Error fetching multiple quotes:', error)

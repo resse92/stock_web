@@ -1,22 +1,22 @@
-import type { CSSProperties } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import type { CSSProperties } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-import { Sidebar } from "@/components/Sidebar";
-import { Dashboard } from "@/components/Dashboard";
-import { RPSPage } from "@/components/rps/Page";
-import { NotFound } from "@/components/NotFound";
-import { WebResearchPage } from "@/components/deepseek/WebResearchPage";
+import { Sidebar } from '@/components/Sidebar'
+import { Dashboard } from '@/components/Dashboard'
+import { RPSPage } from '@/components/rps/Page'
+import { NotFound } from '@/components/NotFound'
+import { WebResearchPage } from '@/components/deepseek/WebResearchPage'
 import {
   SidebarProvider as UISidebarProvider,
   SidebarInset,
-} from "@/components/ui/sidebar";
-import { useSidebar } from "@/components/ui/sidebar-context";
-import { Toaster } from "@/components/ui/toaster";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/sidebar'
+import { useSidebar } from '@/components/ui/sidebar-context'
+import { Toaster } from '@/components/ui/toaster'
+import { cn } from '@/lib/utils'
 
 const AppLayout = () => {
-  const { state } = useSidebar();
-  const collapsed = state === "collapsed";
+  const { state } = useSidebar()
+  const collapsed = state === 'collapsed'
 
   return (
     <>
@@ -24,14 +24,14 @@ const AppLayout = () => {
       <SidebarInset
         style={
           {
-            "--inset-offset": collapsed
-              ? "var(--sidebar-width-icon)"
-              : "var(--sidebar-width)",
+            '--inset-offset': collapsed
+              ? 'var(--sidebar-width-icon)'
+              : 'var(--sidebar-width)',
           } as CSSProperties
         }
         className={cn(
-          "min-h-svh bg-background transition-[margin] duration-300 ease-in-out",
-          "md:ml-(--inset-offset)",
+          'min-h-svh bg-background transition-[margin] duration-300 ease-in-out',
+          'md:ml-(--inset-offset)'
         )}
       >
         <Routes>
@@ -43,8 +43,8 @@ const AppLayout = () => {
         <Toaster />
       </SidebarInset>
     </>
-  );
-};
+  )
+}
 
 function App() {
   return (
@@ -53,7 +53,7 @@ function App() {
         <AppLayout />
       </UISidebarProvider>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App

@@ -1,17 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import Button from "@/components/ui/button";
-import { deepseekApi } from "@/lib/deepseek";
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import Button from '@/components/ui/button'
+import { deepseekApi } from '@/lib/deepseek'
 import type {
   DeepseekAnalysisRequest,
   DeepseekAnalysisResponse,
   DeepseekAnalysisResultPayload,
   DeepseekSource,
   DeepseekSseEvent,
-} from "@/types/deepseek";
+} from '@/types/deepseek'
 import {
   AlertCircle,
   Globe2,
@@ -20,319 +20,319 @@ import {
   Loader2,
   ScrollText,
   Sparkles,
-} from "lucide-react";
+} from 'lucide-react'
 
-const MAX_LOG_ITEMS = 200;
+const MAX_LOG_ITEMS = 200
 
 interface LogEntry {
-  id: string;
-  timestamp: string;
-  content: string;
-  type?: "stream" | "log";
+  id: string
+  timestamp: string
+  content: string
+  type?: 'stream' | 'log'
 }
 
 const parseUrls = (value: string): string[] => {
   return value
     .split(/[\n,]+/)
-    .map((url) => url.trim())
-    .filter(Boolean);
-};
+    .map(url => url.trim())
+    .filter(Boolean)
+}
 
 const isValidUrl = (url: string): boolean => {
   try {
-    const parsed = new URL(url);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
+    const parsed = new URL(url)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
   } catch {
-    return false;
+    return false
   }
-};
+}
 
 const asResultPayload = (
-  result: DeepseekAnalysisResponse["result"],
+  result: DeepseekAnalysisResponse['result']
 ): DeepseekAnalysisResultPayload | undefined => {
-  if (result && typeof result === "object") {
-    return result;
+  if (result && typeof result === 'object') {
+    return result
   }
-  return undefined;
-};
+  return undefined
+}
 
 const extractSummary = (data: DeepseekAnalysisResponse | null): string => {
-  if (!data) return "";
+  if (!data) return ''
 
-  const nested = asResultPayload(data.result);
+  const nested = asResultPayload(data.result)
   const candidates = [
     data.analysis,
     data.summary,
-    typeof data.result === "string" ? data.result : undefined,
+    typeof data.result === 'string' ? data.result : undefined,
     nested?.summary,
     nested?.analysis,
     nested?.content,
-  ].filter((value): value is string => Boolean(value && value.trim()));
+  ].filter((value): value is string => Boolean(value && value.trim()))
 
-  return candidates[0] || "";
-};
+  return candidates[0] || ''
+}
 
 const combineInsights = (data: DeepseekAnalysisResponse | null): string[] => {
-  if (!data) return [];
+  if (!data) return []
 
-  const nested = asResultPayload(data.result);
+  const nested = asResultPayload(data.result)
   const maybeLists = [
     data.insights,
     data.highlights,
     nested?.insights,
     nested?.highlights,
     nested?.keyFindings,
-  ];
+  ]
 
   return maybeLists.reduce<string[]>((acc, list) => {
     if (Array.isArray(list)) {
       const normalized = list
-        .map((item) =>
-          typeof item === "string" ? item.trim() : JSON.stringify(item),
+        .map(item =>
+          typeof item === 'string' ? item.trim() : JSON.stringify(item)
         )
-        .filter(Boolean);
-      acc.push(...normalized);
+        .filter(Boolean)
+      acc.push(...normalized)
     }
-    return acc;
-  }, []);
-};
+    return acc
+  }, [])
+}
 
 const extractSources = (
-  data: DeepseekAnalysisResponse | null,
+  data: DeepseekAnalysisResponse | null
 ): DeepseekSource[] => {
-  if (!data) return [];
+  if (!data) return []
 
-  const nested = asResultPayload(data.result);
+  const nested = asResultPayload(data.result)
   const lists = [data.sources, nested?.sources].filter(
-    (list): list is DeepseekSource[] => Array.isArray(list),
-  );
+    (list): list is DeepseekSource[] => Array.isArray(list)
+  )
 
   if (lists.length === 0) {
-    return [];
+    return []
   }
 
-  return lists.flat().filter((source) => Boolean(source?.url));
-};
+  return lists.flat().filter(source => Boolean(source?.url))
+}
 
 const isPotentialAnalysisPayload = (
-  payload: unknown,
+  payload: unknown
 ): payload is DeepseekAnalysisResponse => {
-  if (typeof payload !== "object" || payload === null) {
-    return false;
+  if (typeof payload !== 'object' || payload === null) {
+    return false
   }
-  const candidate = payload as Record<string, unknown>;
+  const candidate = payload as Record<string, unknown>
   return (
-    "summary" in candidate ||
-    "analysis" in candidate ||
-    "result" in candidate ||
-    "insights" in candidate ||
-    "sources" in candidate
-  );
-};
+    'summary' in candidate ||
+    'analysis' in candidate ||
+    'result' in candidate ||
+    'insights' in candidate ||
+    'sources' in candidate
+  )
+}
 
 const normalizeAnalysisPayload = (
-  payload: unknown,
+  payload: unknown
 ): DeepseekAnalysisResponse | null => {
   if (isPotentialAnalysisPayload(payload)) {
-    return payload;
+    return payload
   }
 
   if (
-    typeof payload === "object" &&
+    typeof payload === 'object' &&
     payload !== null &&
-    "data" in (payload as Record<string, unknown>) &&
+    'data' in (payload as Record<string, unknown>) &&
     isPotentialAnalysisPayload((payload as Record<string, unknown>).data)
   ) {
-    return (payload as { data: DeepseekAnalysisResponse }).data;
+    return (payload as { data: DeepseekAnalysisResponse }).data
   }
 
-  return null;
-};
+  return null
+}
 
 const extractStreamChunk = (payload: unknown): string | null => {
-  if (typeof payload !== "object" || payload === null) {
-    return null;
+  if (typeof payload !== 'object' || payload === null) {
+    return null
   }
 
   const candidate = payload as {
-    status?: string;
+    status?: string
     chunk?: {
       choices?: Array<{
-        delta?: { content?: unknown };
-        content?: unknown;
-        message?: { content?: unknown };
-      }>;
-    };
-  };
+        delta?: { content?: unknown }
+        content?: unknown
+        message?: { content?: unknown }
+      }>
+    }
+  }
 
-  if (candidate.status !== "stream") {
-    return null;
+  if (candidate.status !== 'stream') {
+    return null
   }
 
   const normalizeFragment = (fragment: unknown): string => {
-    if (typeof fragment === "string") {
-      return fragment;
+    if (typeof fragment === 'string') {
+      return fragment
     }
     if (Array.isArray(fragment)) {
       return fragment
-        .map((item) => normalizeFragment(item))
+        .map(item => normalizeFragment(item))
         .filter(Boolean)
-        .join("");
+        .join('')
     }
     if (
-      typeof fragment === "object" &&
+      typeof fragment === 'object' &&
       fragment !== null &&
-      "text" in fragment
+      'text' in fragment
     ) {
-      const maybeText = (fragment as { text?: unknown }).text;
-      return typeof maybeText === "string"
+      const maybeText = (fragment as { text?: unknown }).text
+      return typeof maybeText === 'string'
         ? maybeText
-        : normalizeFragment(maybeText);
+        : normalizeFragment(maybeText)
     }
     if (
-      typeof fragment === "object" &&
+      typeof fragment === 'object' &&
       fragment !== null &&
-      "content" in fragment
+      'content' in fragment
     ) {
-      return normalizeFragment((fragment as { content?: unknown }).content);
+      return normalizeFragment((fragment as { content?: unknown }).content)
     }
-    return "";
-  };
+    return ''
+  }
 
   const fragments =
     candidate.chunk?.choices
-      ?.map((choice) => {
-        if (!choice) return "";
+      ?.map(choice => {
+        if (!choice) return ''
         return (
           normalizeFragment(choice.delta?.content) ||
           normalizeFragment(choice.content) ||
           normalizeFragment(choice.message?.content)
-        );
+        )
       })
-      .filter(Boolean) ?? [];
+      .filter(Boolean) ?? []
 
-  return fragments.length > 0 ? fragments.join("") : null;
-};
+  return fragments.length > 0 ? fragments.join('') : null
+}
 
 const formatSseEvent = (event: DeepseekSseEvent): string => {
-  const label = event.event || "message";
-  return `${label}: ${event.data}`;
-};
+  const label = event.event || 'message'
+  return `${label}: ${event.data}`
+}
 
 const createLogEntry = (
   content: string,
-  type: LogEntry["type"] = "log",
+  type: LogEntry['type'] = 'log'
 ): LogEntry => ({
   id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   timestamp: new Date().toLocaleTimeString(),
   content,
   type,
-});
+})
 
 export const WebResearchPage = () => {
-  const [urlsInput, setUrlsInput] = useState("");
-  const [prompt, setPrompt] = useState("");
-  const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [urlsInput, setUrlsInput] = useState('')
+  const [prompt, setPrompt] = useState('')
+  const [password, setPassword] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [analysis, setAnalysis] = useState<DeepseekAnalysisResponse | null>(
-    null,
-  );
-  const [logs, setLogs] = useState<LogEntry[]>([]);
-  const streamController = useRef<AbortController | null>(null);
+    null
+  )
+  const [logs, setLogs] = useState<LogEntry[]>([])
+  const streamController = useRef<AbortController | null>(null)
 
   useEffect(() => {
     return () => {
-      streamController.current?.abort();
-    };
-  }, []);
+      streamController.current?.abort()
+    }
+  }, [])
 
-  const [streamingContent, setStreamingContent] = useState("");
+  const [streamingContent, setStreamingContent] = useState('')
 
-  const parsedUrls = useMemo(() => parseUrls(urlsInput), [urlsInput]);
+  const parsedUrls = useMemo(() => parseUrls(urlsInput), [urlsInput])
   const invalidUrls = useMemo(
-    () => parsedUrls.filter((url) => !isValidUrl(url)),
-    [parsedUrls],
-  );
+    () => parsedUrls.filter(url => !isValidUrl(url)),
+    [parsedUrls]
+  )
   const summary = useMemo(() => {
-    const finalSummary = extractSummary(analysis);
-    return finalSummary || streamingContent;
-  }, [analysis, streamingContent]);
-  const insights = useMemo(() => combineInsights(analysis), [analysis]);
-  const sources = useMemo(() => extractSources(analysis), [analysis]);
+    const finalSummary = extractSummary(analysis)
+    return finalSummary || streamingContent
+  }, [analysis, streamingContent])
+  const insights = useMemo(() => combineInsights(analysis), [analysis])
+  const sources = useMemo(() => extractSources(analysis), [analysis])
   const rawDebugPayload = useMemo(() => {
-    if (!analysis) return "";
+    if (!analysis) return ''
     try {
-      return JSON.stringify(analysis, null, 2);
+      return JSON.stringify(analysis, null, 2)
     } catch (stringifyError) {
       console.error(
-        "Failed to stringify analysis payload",
+        'Failed to stringify analysis payload',
         stringifyError,
-        analysis,
-      );
-      return "无法格式化返回数据，请检查控制台日志。";
+        analysis
+      )
+      return '无法格式化返回数据，请检查控制台日志。'
     }
-  }, [analysis]);
+  }, [analysis])
 
-  const appendLog = (content: string, type: LogEntry["type"] = "log") => {
-    setLogs((prev) => {
-      const next = [...prev, createLogEntry(content, type)];
-      return next.length > MAX_LOG_ITEMS ? next.slice(-MAX_LOG_ITEMS) : next;
-    });
-  };
+  const appendLog = (content: string, type: LogEntry['type'] = 'log') => {
+    setLogs(prev => {
+      const next = [...prev, createLogEntry(content, type)]
+      return next.length > MAX_LOG_ITEMS ? next.slice(-MAX_LOG_ITEMS) : next
+    })
+  }
 
   const appendStreamLog = (fragment: string) => {
-    if (!fragment) return;
-    setLogs((prev) => {
+    if (!fragment) return
+    setLogs(prev => {
       if (prev.length > 0) {
-        const last = prev[prev.length - 1];
-        if (last.type === "stream") {
-          const updated = [...prev];
+        const last = prev[prev.length - 1]
+        if (last.type === 'stream') {
+          const updated = [...prev]
           updated[updated.length - 1] = {
             ...last,
             content: `${last.content}${fragment}`,
             timestamp: new Date().toLocaleTimeString(),
-          };
-          return updated;
+          }
+          return updated
         }
       }
 
-      const next = [...prev, createLogEntry(fragment, "stream")];
-      return next.length > MAX_LOG_ITEMS ? next.slice(-MAX_LOG_ITEMS) : next;
-    });
-  };
+      const next = [...prev, createLogEntry(fragment, 'stream')]
+      return next.length > MAX_LOG_ITEMS ? next.slice(-MAX_LOG_ITEMS) : next
+    })
+  }
 
   const resetLogs = (initialMessage?: string) => {
     if (initialMessage) {
-      setLogs([createLogEntry(initialMessage)]);
+      setLogs([createLogEntry(initialMessage)])
     } else {
-      setLogs([]);
+      setLogs([])
     }
-  };
+  }
 
-  const resetStreamingContent = () => setStreamingContent("");
+  const resetStreamingContent = () => setStreamingContent('')
 
   const appendStreamingContent = (fragment: string) => {
-    if (!fragment) return;
-    setStreamingContent((prev) => `${prev}${fragment}`);
-  };
+    if (!fragment) return
+    setStreamingContent(prev => `${prev}${fragment}`)
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError(null);
+    event.preventDefault()
+    setError(null)
 
-    const urls = parseUrls(urlsInput);
+    const urls = parseUrls(urlsInput)
     if (urls.length === 0) {
-      setError("请至少输入一个有效的 URL");
-      return;
+      setError('请至少输入一个有效的 URL')
+      return
     }
-    if (urls.some((url) => !isValidUrl(url))) {
-      setError("存在无法识别的 URL，请检查后重试");
-      return;
+    if (urls.some(url => !isValidUrl(url))) {
+      setError('存在无法识别的 URL，请检查后重试')
+      return
     }
     if (!password.trim()) {
-      setError("请输入访问密码");
-      return;
+      setError('请输入访问密码')
+      return
     }
 
     const payload: DeepseekAnalysisRequest = {
@@ -340,69 +340,69 @@ export const WebResearchPage = () => {
       password: password.trim(),
       prompt_template: prompt.trim() || undefined,
       stream: true,
-    };
+    }
 
-    streamController.current?.abort();
-    const controller = new AbortController();
-    streamController.current = controller;
+    streamController.current?.abort()
+    const controller = new AbortController()
+    streamController.current = controller
 
-    setAnalysis(null);
-    resetStreamingContent();
-    resetLogs("已提交任务，等待服务器响应...");
-    setIsSubmitting(true);
+    setAnalysis(null)
+    resetStreamingContent()
+    resetLogs('已提交任务，等待服务器响应...')
+    setIsSubmitting(true)
 
     try {
-      let lastStructured: DeepseekAnalysisResponse | null = null;
+      let lastStructured: DeepseekAnalysisResponse | null = null
 
       for await (const event of deepseekApi.streamAnalysis(
         payload,
-        controller.signal,
+        controller.signal
       )) {
-        let handledStreamChunk = false;
+        let handledStreamChunk = false
 
         if (event.json) {
-          const chunk = extractStreamChunk(event.json);
+          const chunk = extractStreamChunk(event.json)
           if (chunk) {
-            appendStreamingContent(chunk);
-            appendStreamLog(chunk);
-            handledStreamChunk = true;
+            appendStreamingContent(chunk)
+            appendStreamLog(chunk)
+            handledStreamChunk = true
           }
 
-          const normalized = normalizeAnalysisPayload(event.json);
+          const normalized = normalizeAnalysisPayload(event.json)
           if (normalized) {
-            lastStructured = normalized;
-            setAnalysis(normalized);
-            resetStreamingContent();
+            lastStructured = normalized
+            setAnalysis(normalized)
+            resetStreamingContent()
           }
         }
 
         if (!handledStreamChunk) {
-          appendLog(formatSseEvent(event));
+          appendLog(formatSseEvent(event))
         }
       }
 
-      appendLog("流式响应已结束。");
+      appendLog('流式响应已结束。')
 
       if (!lastStructured) {
-        appendLog("未收到结构化分析结果，请参考日志信息。");
-        setError("未收到有效分析结果，请查看日志。");
+        appendLog('未收到结构化分析结果，请参考日志信息。')
+        setError('未收到有效分析结果，请查看日志。')
       }
     } catch (err) {
-      if ((err as Error).name === "AbortError") {
-        appendLog("流式请求已取消。");
+      if ((err as Error).name === 'AbortError') {
+        appendLog('流式请求已取消。')
       } else {
         const message =
-          err instanceof Error ? err.message : "提交失败，请稍后再试";
-        appendLog(`错误：${message}`);
-        setError(message);
+          err instanceof Error ? err.message : '提交失败，请稍后再试'
+        appendLog(`错误：${message}`)
+        setError(message)
       }
     } finally {
-      streamController.current = null;
-      setIsSubmitting(false);
+      streamController.current = null
+      setIsSubmitting(false)
     }
-  };
+  }
 
-  const handleClearLogs = () => resetLogs();
+  const handleClearLogs = () => resetLogs()
 
   return (
     <div className="min-h-screen bg-background">
@@ -435,7 +435,7 @@ export const WebResearchPage = () => {
                       id="urls"
                       placeholder="每行一个 URL，或使用英文逗号分隔"
                       value={urlsInput}
-                      onChange={(event) => setUrlsInput(event.target.value)}
+                      onChange={event => setUrlsInput(event.target.value)}
                       className="font-mono"
                       required
                     />
@@ -452,7 +452,7 @@ export const WebResearchPage = () => {
                       id="prompt"
                       placeholder="输入希望 Deepseek 关注的视角或输出格式"
                       value={prompt}
-                      onChange={(event) => setPrompt(event.target.value)}
+                      onChange={event => setPrompt(event.target.value)}
                     />
                   </div>
 
@@ -463,7 +463,7 @@ export const WebResearchPage = () => {
                       type="password"
                       placeholder="请输入授权密码"
                       value={password}
-                      onChange={(event) => setPassword(event.target.value)}
+                      onChange={event => setPassword(event.target.value)}
                       required
                     />
                     <p className="text-xs text-muted-foreground flex items-center gap-1">
@@ -619,7 +619,7 @@ export const WebResearchPage = () => {
                     </p>
                   ) : (
                     <ul className="space-y-3">
-                      {logs.map((log) => (
+                      {logs.map(log => (
                         <li key={log.id}>
                           <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
                             {log.timestamp}
@@ -643,5 +643,5 @@ export const WebResearchPage = () => {
         </div>
       </main>
     </div>
-  );
-};
+  )
+}

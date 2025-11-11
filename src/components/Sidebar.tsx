@@ -1,8 +1,8 @@
-import { Link, useLocation } from "react-router-dom";
-import { Home, Crown, Globe2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link, useLocation } from 'react-router-dom'
+import { Home, Crown, Globe2, ChevronLeft, ChevronRight } from 'lucide-react'
 
-import Button from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import Button from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
@@ -15,18 +15,18 @@ import {
   SidebarMenuItem,
   SidebarRail,
   SidebarSeparator,
-} from "@/components/ui/sidebar";
-import { useSidebar } from "@/components/ui/sidebar-context";
+} from '@/components/ui/sidebar'
+import { useSidebar } from '@/components/ui/sidebar-context'
 
 const navItems = [
-  { path: "/", label: "Dashboard", icon: Home },
-  { path: "/tanstack", label: "RPS", icon: Crown },
-  { path: "/web-research", label: "网页调研", icon: Globe2 },
-];
+  { path: '/', label: 'Dashboard', icon: Home },
+  { path: '/tanstack', label: 'RPS', icon: Crown },
+  { path: '/web-research', label: '网页调研', icon: Globe2 },
+]
 
 const CollapseButton = () => {
-  const { state, toggleSidebar } = useSidebar();
-  const collapsed = state === "collapsed";
+  const { state, toggleSidebar } = useSidebar()
+  const collapsed = state === 'collapsed'
 
   return (
     <Button
@@ -42,13 +42,13 @@ const CollapseButton = () => {
       )}
       {!collapsed && <span>收起侧边栏</span>}
     </Button>
-  );
-};
+  )
+}
 
 export const Sidebar = () => {
-  const location = useLocation();
-  const { state } = useSidebar();
-  const collapsed = state === "collapsed";
+  const location = useLocation()
+  const { state } = useSidebar()
+  const collapsed = state === 'collapsed'
 
   return (
     <>
@@ -61,14 +61,14 @@ export const Sidebar = () => {
           <Link
             to="/"
             className={`flex items-center gap-3 px-2 py-3 transition-opacity ${
-              collapsed ? "justify-center" : ""
+              collapsed ? 'justify-center' : ''
             }`}
           >
             <img
               src="/logo.svg"
               alt="StockWeb Logo"
               className="w-10 shrink-0 rounded-md bg-primary/10 p-2 aspect-square object-contain"
-              style={{ aspectRatio: "1 / 1" }}
+              style={{ aspectRatio: '1 / 1' }}
             />
             {!collapsed && (
               <div className="leading-tight">
@@ -85,9 +85,9 @@ export const Sidebar = () => {
             </SidebarGroupLabel>*/}
             <SidebarGroupContent>
               <SidebarMenu>
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = location.pathname === item.path;
+                {navItems.map(item => {
+                  const Icon = item.icon
+                  const isActive = location.pathname === item.path
 
                   return (
                     <SidebarMenuItem key={item.path}>
@@ -96,11 +96,11 @@ export const Sidebar = () => {
                         isActive={isActive}
                         tooltip={collapsed ? item.label : undefined}
                         className={cn(
-                          "px-4 py-3 text-sm font-medium transition-colors",
-                          "rounded-lg",
+                          'px-4 py-3 text-sm font-medium transition-colors',
+                          'rounded-lg',
                           isActive
-                            ? "bg-primary text-primary-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:bg-muted",
+                            ? 'bg-primary text-primary-foreground shadow-sm'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                         )}
                       >
                         <Link to={item.path}>
@@ -109,7 +109,7 @@ export const Sidebar = () => {
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  );
+                  )
                 })}
               </SidebarMenu>
             </SidebarGroupContent>
@@ -124,5 +124,5 @@ export const Sidebar = () => {
       </ShadcnSidebar>
       <SidebarRail />
     </>
-  );
-};
+  )
+}

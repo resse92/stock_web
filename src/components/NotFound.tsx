@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
-import { Home, ArrowLeft, Search } from "lucide-react";
-import Button from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from 'react-router-dom'
+import { Home, ArrowLeft, Search } from 'lucide-react'
+import Button from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export const NotFound = () => {
   return (
@@ -94,5 +94,5 @@ export const NotFound = () => {
         </div>
       </main>
     </div>
-  );
-};
+  )
+}

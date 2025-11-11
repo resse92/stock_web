@@ -106,7 +106,7 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
       <div className="flex items-center space-x-2">
         <Checkbox
           checked={value.enabled}
-          onCheckedChange={(checked) => handleRPSEnable(rpsType, !!checked)}
+          onCheckedChange={checked => handleRPSEnable(rpsType, !!checked)}
         />
         <Label className="text-sm font-medium">{label}</Label>
 
@@ -138,7 +138,7 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
                     min="0"
                     max="100"
                     value={localMin}
-                    onChange={(e) => {
+                    onChange={e => {
                       setLocalMin(e.target.value)
                       setError('')
                     }}
@@ -158,7 +158,7 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
                     min="0"
                     max="100"
                     value={localMax}
-                    onChange={(e) => {
+                    onChange={e => {
                       setLocalMax(e.target.value)
                       setError('')
                     }}
@@ -220,7 +220,7 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
           <Label className="text-sm font-medium">日期</Label>
           <DatePicker
             date={filters.date}
-            onDateChange={(date) => handleFilterChange('date', date)}
+            onDateChange={date => handleFilterChange('date', date)}
             className="w-32"
           />
         </div>
@@ -231,7 +231,7 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
             type="number"
             placeholder="0"
             value={filters.marketCap || ''}
-            onChange={(e) =>
+            onChange={e =>
               handleFilterChange('marketCap', parseFloat(e.target.value) || 0)
             }
             className="w-16 h-7 text-sm"
@@ -244,7 +244,7 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
             type="number"
             placeholder="360"
             value={filters.listingDays || ''}
-            onChange={(e) =>
+            onChange={e =>
               handleFilterChange('listingDays', parseInt(e.target.value) || 360)
             }
             className="w-16 h-7 text-sm"

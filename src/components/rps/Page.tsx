@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import { RPSTable } from "./Table";
-import RPSFilters, { type RPSFilterValues } from "./RPSFilters";
-import { stockApi } from "@/lib/api";
-import type { RpsItemData } from "@/types/stock";
-import type { RpsFilter } from "@/types/api";
-import { useToast } from "@/hooks/use-toast";
+import React, { useState } from 'react'
+import { RPSTable } from './Table'
+import RPSFilters, { type RPSFilterValues } from './RPSFilters'
+import { stockApi } from '@/lib/api'
+import type { RpsItemData } from '@/types/stock'
+import type { RpsFilter } from '@/types/api'
+import { useToast } from '@/hooks/use-toast'
 
 export const RPSPage: React.FC = () => {
-  const [rpsData, setRpsData] = useState<RpsItemData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
+  const [rpsData, setRpsData] = useState<RpsItemData[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
 
   const handleFiltersChange = React.useCallback(
     async (filters: RPSFilterValues) => {
@@ -30,37 +30,37 @@ export const RPSPage: React.FC = () => {
           : undefined,
         marketCap: filters.marketCap,
         listingDays: filters.listingDays,
-      };
+      }
 
       try {
-        setLoading(true);
-        setError(null);
+        setLoading(true)
+        setError(null)
 
-        const data = await stockApi.getRps(filters.date, rpsFilter);
-        console.log(data);
+        const data = await stockApi.getRps(filters.date, rpsFilter)
+        console.log(data)
 
-        setRpsData(data);
+        setRpsData(data)
       } catch (err) {
-        console.error("获取RPS数据失败:", err);
+        console.error('获取RPS数据失败:', err)
         const errorMessage =
-          err instanceof Error ? err.message : "获取数据失败，请稍后重试";
+          err instanceof Error ? err.message : '获取数据失败，请稍后重试'
 
         // 清空数据
-        setRpsData([]);
-        setError(errorMessage);
+        setRpsData([])
+        setError(errorMessage)
 
         // 显示toast错误提醒
         toast({
-          variant: "destructive",
-          title: "请求失败",
+          variant: 'destructive',
+          title: '请求失败',
           description: errorMessage,
-        });
+        })
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     },
-    [toast],
-  );
+    [toast]
+  )
 
   return (
     <div className="h-screen overflow-hidden bg-background">
@@ -76,5 +76,5 @@ export const RPSPage: React.FC = () => {
         </div>
       </main>
     </div>
-  );
-};
+  )
+}

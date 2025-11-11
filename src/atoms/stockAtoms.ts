@@ -30,46 +30,47 @@ const initialStockState: StockState = {
 
 // Base atoms
 export const stocksAtom = atom<StockData[]>(initialStockState.stocks)
-export const stockCacheAtom = atom<Record<string, StockData>>(initialStockState.stockCache)
-export const chartDataCacheAtom = atom<Record<string, ChartData[]>>(initialStockState.chartDataCache)
-export const quotesCacheAtom = atom<Record<string, StockQuote>>(initialStockState.quotesCache)
-export const stockLoadingAtom = atom<StockState['loading']>(initialStockState.loading)
+export const stockCacheAtom = atom<Record<string, StockData>>(
+  initialStockState.stockCache
+)
+export const chartDataCacheAtom = atom<Record<string, ChartData[]>>(
+  initialStockState.chartDataCache
+)
+export const quotesCacheAtom = atom<Record<string, StockQuote>>(
+  initialStockState.quotesCache
+)
+export const stockLoadingAtom = atom<StockState['loading']>(
+  initialStockState.loading
+)
 export const stockErrorAtom = atom<StockState['error']>(initialStockState.error)
-export const lastFetchAtom = atom<StockState['lastFetch']>(initialStockState.lastFetch)
+export const lastFetchAtom = atom<StockState['lastFetch']>(
+  initialStockState.lastFetch
+)
 
 // Action atoms - Stock data
-export const setStocksAtom = atom(
-  null,
-  (get, set, stocks: StockData[]) => {
-    set(stocksAtom, stocks)
-    set(lastFetchAtom, {
-      ...get(lastFetchAtom),
-      stocks: Date.now(),
-    })
-  }
-)
+export const setStocksAtom = atom(null, (get, set, stocks: StockData[]) => {
+  set(stocksAtom, stocks)
+  set(lastFetchAtom, {
+    ...get(lastFetchAtom),
+    stocks: Date.now(),
+  })
+})
 
-export const addStockAtom = atom(
-  null,
-  (get, set, stock: StockData) => {
-    const current = get(stocksAtom)
-    set(
-      stocksAtom,
-      [...current.filter((s) => s.symbol !== stock.symbol), stock]
-    )
-    set(stockCacheAtom, {
-      ...get(stockCacheAtom),
-      [stock.symbol]: stock,
-    })
-  }
-)
+export const addStockAtom = atom(null, (get, set, stock: StockData) => {
+  const current = get(stocksAtom)
+  set(stocksAtom, [...current.filter(s => s.symbol !== stock.symbol), stock])
+  set(stockCacheAtom, {
+    ...get(stockCacheAtom),
+    [stock.symbol]: stock,
+  })
+})
 
 export const updateStockAtom = atom(
   null,
   (get, set, symbol: string, updates: Partial<StockData>) => {
     set(
       stocksAtom,
-      get(stocksAtom).map((stock) =>
+      get(stocksAtom).map(stock =>
         stock.symbol === symbol ? { ...stock, ...updates } : stock
       )
     )
@@ -137,15 +138,12 @@ export const setQuoteInCacheAtom = atom(
 )
 
 // Action atoms - Loading states
-export const setStocksLoadingAtom = atom(
-  null,
-  (get, set, loading: boolean) => {
-    set(stockLoadingAtom, {
-      ...get(stockLoadingAtom),
-      stocks: loading,
-    })
-  }
-)
+export const setStocksLoadingAtom = atom(null, (get, set, loading: boolean) => {
+  set(stockLoadingAtom, {
+    ...get(stockLoadingAtom),
+    stocks: loading,
+  })
+})
 
 export const setIndividualLoadingAtom = atom(
   null,
@@ -239,15 +237,12 @@ export const setQuoteErrorAtom = atom(
 )
 
 // Action atoms - Cache invalidation
-export const invalidateStocksCacheAtom = atom(
-  null,
-  (get, set) => {
-    set(lastFetchAtom, {
-      ...get(lastFetchAtom),
-      stocks: null,
-    })
-  }
-)
+export const invalidateStocksCacheAtom = atom(null, (get, set) => {
+  set(lastFetchAtom, {
+    ...get(lastFetchAtom),
+    stocks: null,
+  })
+})
 
 export const invalidateStockCacheAtom = atom(
   null,
@@ -273,7 +268,7 @@ export const invalidateChartCacheAtom = atom(
       newChartsFetch[key] = 0
     } else {
       // Invalidate all periods for this symbol
-      Object.keys(newChartsFetch).forEach((key) => {
+      Object.keys(newChartsFetch).forEach(key => {
         if (key.startsWith(`${symbol}-`)) {
           newChartsFetch[key] = 0
         }
@@ -301,7 +296,7 @@ export const invalidateQuoteCacheAtom = atom(
 )
 
 // Combined stock state atom (for compatibility)
-export const stockStateAtom = atom((get) => ({
+export const stockStateAtom = atom(get => ({
   stocks: get(stocksAtom),
   stockCache: get(stockCacheAtom),
   chartDataCache: get(chartDataCacheAtom),

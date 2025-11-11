@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { ChartData } from '@/types/stock';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import type { ChartData } from '@/types/stock'
 import {
   LineChart,
   Line,
@@ -10,28 +10,36 @@ import {
   ResponsiveContainer,
   AreaChart,
   Area,
-} from 'recharts';
+} from 'recharts'
 
 interface StockChartProps {
-  data: ChartData[];
-  title?: string;
-  type?: 'line' | 'area';
+  data: ChartData[]
+  title?: string
+  type?: 'line' | 'area'
 }
 
-export const StockChart = ({ data, title = "Stock Price Chart", type = 'area' }: StockChartProps) => {
+export const StockChart = ({
+  data,
+  title = 'Stock Price Chart',
+  type = 'area',
+}: StockChartProps) => {
   const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }
 
   const formatPrice = (value: number) => {
-    return `$${value.toFixed(2)}`;
-  };
+    return `$${value.toFixed(2)}`
+  }
 
-  const CustomTooltip = ({ active, payload, label }: {
-    active?: boolean;
-    payload?: Array<{ value: number }>;
-    label?: string;
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: {
+    active?: boolean
+    payload?: Array<{ value: number }>
+    label?: string
   }) => {
     if (active && payload && payload.length && label) {
       return (
@@ -46,10 +54,10 @@ export const StockChart = ({ data, title = "Stock Price Chart", type = 'area' }:
             </p>
           )}
         </div>
-      );
+      )
     }
-    return null;
-  };
+    return null
+  }
 
   return (
     <Card className="col-span-full">
@@ -62,18 +70,32 @@ export const StockChart = ({ data, title = "Stock Price Chart", type = 'area' }:
             {type === 'area' ? (
               <AreaChart data={data}>
                 <defs>
-                  <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                  <linearGradient
+                    id="priceGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="5%"
+                      stopColor="hsl(var(--primary))"
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="hsl(var(--primary))"
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis 
-                  dataKey="date" 
+                <XAxis
+                  dataKey="date"
                   tickFormatter={formatDate}
                   className="text-xs text-muted-foreground"
                 />
-                <YAxis 
+                <YAxis
                   tickFormatter={formatPrice}
                   className="text-xs text-muted-foreground"
                 />
@@ -89,12 +111,12 @@ export const StockChart = ({ data, title = "Stock Price Chart", type = 'area' }:
             ) : (
               <LineChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis 
-                  dataKey="date" 
+                <XAxis
+                  dataKey="date"
                   tickFormatter={formatDate}
                   className="text-xs text-muted-foreground"
                 />
-                <YAxis 
+                <YAxis
                   tickFormatter={formatPrice}
                   className="text-xs text-muted-foreground"
                 />
@@ -112,5 +134,5 @@ export const StockChart = ({ data, title = "Stock Price Chart", type = 'area' }:
         </div>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
