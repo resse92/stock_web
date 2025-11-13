@@ -4,8 +4,8 @@ FROM node:22-alpine AS builder
 # 设置工作目录
 WORKDIR /app
 
-# 启用 corepack 以使用 pnpm
-RUN corepack enable
+# 启用 corepack 并显式安装 pnpm，避免未设置 packageManager 时找不到命令
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 # 复制依赖清单与 npmrc（确保使用国内源）
 COPY package.json pnpm-lock.yaml ./
