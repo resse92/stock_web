@@ -4,24 +4,24 @@ FROM node:22-alpine AS builder
 # 设置工作目录
 WORKDIR /app
 
-# 设置npm镜像源为淘宝镜像
-RUN npm config set registry https://registry.npmmirror.com
+# 启用 corepack 以使用 pnpm
+RUN corepack enable
 
-# 复制package文件
-COPY package*.json ./
+# 复制依赖清单与 npmrc（确保使用国内源）
+COPY package.json pnpm-lock.yaml ./
+COPY .npmrc .npmrc
 
 # 安装依赖
-RUN npm ci --silent
+RUN pnpm install --frozen-lockfile --silent
 
 # 复制源代码
 COPY . .
 
 # 构建应用
-RUN npm run build
+RUN pnpm run build
 
 # 清理缓存和依赖
-RUN npm cache clean --force
-RUN rm -rf node_modules
+RUN pnpm store prune && rm -rf node_modules
 
 # 生产阶段 - 使用Nginx提供静态文件
 FROM nginx:alpine AS production

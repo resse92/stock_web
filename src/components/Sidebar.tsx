@@ -60,7 +60,7 @@ export const Sidebar = () => {
         <SidebarHeader className="border-b border-border">
           <Link
             to="/"
-            className={`flex items-center gap-3 px-2 py-3 transition-opacity ${
+            className={`flex items-center gap-3 pl-1 pr-3 py-3 transition-opacity ${
               collapsed ? 'justify-center' : ''
             }`}
           >
