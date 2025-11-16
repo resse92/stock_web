@@ -34,6 +34,14 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
     listingDays: 360,
     date: new Date().toISOString().split('T')[0],
   })
+  const initialFetchTriggered = React.useRef(false)
+
+  React.useEffect(() => {
+    if (!initialFetchTriggered.current) {
+      onFiltersChange?.(filters)
+      initialFetchTriggered.current = true
+    }
+  }, [filters, onFiltersChange])
 
   const handleFilterChange = (key: keyof RPSFilterValues, value: any) => {
     const newFilters = { ...filters, [key]: value }

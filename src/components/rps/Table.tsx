@@ -177,13 +177,13 @@ export const RPSTable: React.FC<RPSTableProps> = ({
   }
 
   return (
-    <Card className="w-full">
-      <CardContent className="p-0">
-        <div className="relative">
+    <Card className="w-full h-full flex flex-col">
+      <CardContent className="p-0 flex-1 overflow-hidden">
+        <div className="relative h-full">
           {/* 统一的滚动容器，包含Header和Body */}
           <div
             ref={parentRef}
-            className="h-[600px] overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+            className="h-full overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
           >
             {/* Fixed Header - 现在在滚动容器内部 */}
             <div className="sticky top-0 z-20 bg-background border-b">

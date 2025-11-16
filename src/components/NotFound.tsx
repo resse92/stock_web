@@ -60,9 +60,9 @@ export const NotFound = () => {
                     </Link>
                   </Button>
                   <Button asChild variant="outline" className="w-full">
-                    <Link to="/tanstack">
+                    <Link to="/rps">
                       <ArrowLeft className="h-4 w-4 mr-2" />
-                      TanStack 演示
+                      RPS 页面
                     </Link>
                   </Button>
                 </div>
@@ -81,7 +81,7 @@ export const NotFound = () => {
                 <Link to="/advanced">Advanced</Link>
               </Button>
               <Button asChild variant="ghost" size="sm">
-                <Link to="/tanstack">TanStack</Link>
+                <Link to="/rps">RPS</Link>
               </Button>
               <Button asChild variant="ghost" size="sm">
                 <Link to="/test">Test</Link>

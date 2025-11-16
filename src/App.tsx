@@ -36,7 +36,7 @@ const AppLayout = () => {
       >
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/tanstack" element={<RPSPage />} />
+          <Route path="/rps" element={<RPSPage />} />
           <Route path="/web-research" element={<WebResearchPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

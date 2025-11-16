@@ -20,7 +20,7 @@ import { useSidebar } from '@/components/ui/sidebar-context'
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: Home },
-  { path: '/tanstack', label: 'RPS', icon: Crown },
+  { path: '/rps', label: 'RPS', icon: Crown },
   { path: '/web-research', label: '网页调研', icon: Globe2 },
 ]
 
