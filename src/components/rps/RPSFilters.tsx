@@ -43,7 +43,7 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
     }
   }, [filters, onFiltersChange])
 
-  const handleFilterChange = (key: keyof RPSFilterValues, value: any) => {
+  const handleFilterChange = (key: keyof RPSFilterValues, value: unknown) => {
     const newFilters = { ...filters, [key]: value }
     setFilters(newFilters)
   }

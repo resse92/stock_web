@@ -136,12 +136,8 @@ class HttpClient {
   /**
    * Format success response
    */
-  private formatSuccessResponse<T>(data: T): ApiResponse<T> {
-    return {
-      data,
-      success: true,
-      timestamp: new Date().toISOString(),
-    }
+  private formatSuccessResponse<T>(data: ApiResponse<T>): ApiResponse<T> {
+    return data
   }
 
   /**

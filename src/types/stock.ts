@@ -1,6 +1,8 @@
-export interface ApiResponse<T> {
-  data: T
+export interface RpsResp {
+  items: RpsItemData[]
+  count: number
 }
+
 export interface RpsItemData {
   code: string
   name: string

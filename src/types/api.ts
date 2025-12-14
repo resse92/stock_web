@@ -1,9 +1,8 @@
 // HTTP Client Types
 export interface ApiResponse<T = unknown> {
-  data: T
-  success: boolean
-  message?: string
-  timestamp: string
+  code: number
+  msg: string
+  data?: T
 }
 
 export interface ApiError {
