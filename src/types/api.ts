@@ -48,4 +48,6 @@ export interface AppConfig {
   wsUrl: string
   apiTimeout: number
   environment: string
+  supabaseUrl: string
+  supabaseAnonKey: string
 }
