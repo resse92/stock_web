@@ -8,7 +8,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import Button from '@/components/ui/button'
-import { DatePicker } from '@/components/ui/date-picker'
+import TradeDateCalendar from '@/components/ui/trade-date-calendar'
 
 interface RPSFiltersProps {
   onFiltersChange?: (filters: RPSFilterValues) => void
@@ -32,12 +32,12 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
     rps30: { enabled: false, min: 0, max: 100 },
     marketCap: 80,
     listingDays: 360,
-    date: new Date().toISOString().split('T')[0],
+    date: '',
   })
   const initialFetchTriggered = React.useRef(false)
 
   React.useEffect(() => {
-    if (!initialFetchTriggered.current) {
+    if (!initialFetchTriggered.current && filters.date) {
       onFiltersChange?.(filters)
       initialFetchTriggered.current = true
     }
@@ -226,10 +226,9 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
       <div className="flex items-center gap-4">
         <div className="flex items-center space-x-2">
           <Label className="text-sm font-medium">日期</Label>
-          <DatePicker
+          <TradeDateCalendar
             date={filters.date}
             onDateChange={date => handleFilterChange('date', date)}
-            className="w-32"
           />
         </div>
 
@@ -264,6 +263,7 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
           variant="outline"
           size="sm"
           onClick={handleConfirm}
+          disabled={!filters.date}
           className="active:bg-black active:text-white"
         >
           确认

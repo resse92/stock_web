@@ -1,6 +1,5 @@
-
 import { Download, Plus, Github } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import Button from '@/components/ui/button'
 
 export function DashboardHeader() {
   return (
@@ -33,5 +32,5 @@ export function DashboardHeader() {
         </Button>
       </div>
     </div>
-  );
+  )
 }

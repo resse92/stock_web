@@ -234,7 +234,7 @@ export const MyComponent = ({
 #### 使用 shadcn/ui 组件
 
 ```tsx
-import { Button } from '@/components/ui/button'
+import Button from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export const StockCard = ({ stock }: { stock: StockData }) => {

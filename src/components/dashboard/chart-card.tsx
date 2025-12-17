@@ -1,13 +1,12 @@
-
-import { useState } from "react";
-import { Users, Calendar as CalendarIcon, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { useState } from 'react'
+import { Users, Calendar as CalendarIcon, ChevronDown } from 'lucide-react'
+import Button from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover'
 import {
   BarChart,
   Bar,
@@ -16,38 +15,39 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from "recharts";
-import { useDashboardStore } from "@/stores/dashboard/dashboard-store";
+  type TooltipContentProps,
+} from 'recharts'
+import { useDashboardStore } from '@/stores/dashboard/dashboard-store'
 
 // Couleurs exactes du design Figma
-const NEW_LEADS_COLOR_LIGHT = "#252C2C";
-const NEW_LEADS_COLOR_DARK = "#E8E9ED"; // Gris clair pour dark mode
-const REPLIED_COLOR = "#888DF9";
+const NEW_LEADS_COLOR_LIGHT = '#252C2C'
+const NEW_LEADS_COLOR_DARK = '#E8E9ED' // Gris clair pour dark mode
+const REPLIED_COLOR = '#888DF9'
 
 // Couleurs pour les labels selon le thème
-const LABEL_COLOR_LIGHT = "#95979d";
-const LABEL_COLOR_DARK = "#B4B4B4"; // Gris clair pour dark mode
+const LABEL_COLOR_LIGHT = '#95979d'
+const LABEL_COLOR_DARK = '#B4B4B4' // Gris clair pour dark mode
 
 // Couleurs pour la grille selon le thème
-const GRID_COLOR_LIGHT = "#E8E9ED";
-const GRID_COLOR_DARK = "#2A2A2A";
+const GRID_COLOR_LIGHT = '#E8E9ED'
+const GRID_COLOR_DARK = '#2A2A2A'
 
 export function ChartCard() {
-  const { chartData } = useDashboardStore();
-  const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const { chartData } = useDashboardStore()
+  const [open, setOpen] = useState(false)
+  const [date, setDate] = useState<Date | undefined>(undefined)
 
   // Use light theme for now
-  const isDark = false;
-  const newLeadsColor = isDark ? NEW_LEADS_COLOR_DARK : NEW_LEADS_COLOR_LIGHT;
-  const labelColor = isDark ? LABEL_COLOR_DARK : LABEL_COLOR_LIGHT;
-  const gridColor = isDark ? GRID_COLOR_DARK : GRID_COLOR_LIGHT;
+  const isDark = false
+  const newLeadsColor = isDark ? NEW_LEADS_COLOR_DARK : NEW_LEADS_COLOR_LIGHT
+  const labelColor = isDark ? LABEL_COLOR_DARK : LABEL_COLOR_LIGHT
+  const gridColor = isDark ? GRID_COLOR_DARK : GRID_COLOR_LIGHT
 
   const formatDateRange = (date: Date | undefined) => {
-    if (!date) return "November";
-    const month = date.toLocaleDateString("en-US", { month: "long" });
-    return month;
-  };
+    if (!date) return 'November'
+    const month = date.toLocaleDateString('en-US', { month: 'long' })
+    return month
+  }
 
   return (
     <div className="relative rounded-xl border border-border bg-card p-6 max-h-[400px] overflow-y-auto">
@@ -75,9 +75,9 @@ export function ChartCard() {
               mode="single"
               selected={date}
               captionLayout="dropdown"
-              onSelect={(selectedDate) => {
-                setDate(selectedDate);
-                setOpen(false);
+              onSelect={selectedDate => {
+                setDate(selectedDate)
+                setOpen(false)
               }}
             />
           </PopoverContent>
@@ -124,13 +124,13 @@ export function ChartCard() {
                 fill: labelColor,
                 fontSize: 12,
                 fontWeight: 400,
-                fontFamily: "inherit",
+                fontFamily: 'inherit',
               }}
               axisLine={false}
               tickLine={false}
               tickMargin={13}
               style={{
-                letterSpacing: "-0.24px",
+                letterSpacing: '-0.24px',
               }}
             />
             <YAxis
@@ -138,39 +138,41 @@ export function ChartCard() {
                 fill: labelColor,
                 fontSize: 12,
                 fontWeight: 400,
-                fontFamily: "inherit",
+                fontFamily: 'inherit',
               }}
               axisLine={false}
               tickLine={false}
               domain={[0, 1000]}
               ticks={[0, 250, 500, 750, 1000]}
-              tickFormatter={(value) => {
-                if (value === 1000) return "1,000";
-                return value.toString();
+              tickFormatter={(value: number) => {
+                if (value === 1000) return '1,000'
+                return value.toString()
               }}
               style={{
-                letterSpacing: "-0.24px",
+                letterSpacing: '-0.24px',
               }}
               width={40}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "transparent",
-                border: "none",
-                boxShadow: "none",
+                backgroundColor: 'transparent',
+                border: 'none',
+                boxShadow: 'none',
                 padding: 0,
               }}
               wrapperStyle={{
-                outline: "none",
+                outline: 'none',
               }}
-              content={({ active, payload, label }) => {
-                if (!active || !payload || !payload.length) return null;
+              content={({
+                active,
+                payload,
+                label,
+              }: TooltipContentProps<number, string>) => {
+                if (!active || !payload.length) return null
                 const newLeadsEntry = payload.find(
-                  (p) => p.dataKey === "newLeads"
-                );
-                const repliedEntry = payload.find(
-                  (p) => p.dataKey === "replied"
-                );
+                  p => p.dataKey === 'newLeads'
+                )
+                const repliedEntry = payload.find(p => p.dataKey === 'replied')
                 return (
                   <div className="rounded-lg border border-border bg-card p-2 shadow-lg">
                     <p className="mb-1.5 text-xs font-medium text-foreground tracking-[-0.24px]">
@@ -205,7 +207,7 @@ export function ChartCard() {
                       </div>
                     )}
                   </div>
-                );
+                )
               }}
             />
             <Bar
@@ -224,5 +226,5 @@ export function ChartCard() {
         </ResponsiveContainer>
       </div>
     </div>
-  );
+  )
 }

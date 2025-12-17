@@ -48,7 +48,7 @@ class DeepseekService {
       this.endpoint,
       payload
     )
-    return response.data
+    return response.data as DeepseekAnalysisResponse
   }
 
   public async *streamAnalysis(

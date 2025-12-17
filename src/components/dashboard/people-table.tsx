@@ -1,17 +1,16 @@
-
-import * as React from "react";
+import * as React from 'react'
 import {
-  ColumnDef,
-  ColumnFiltersState,
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
+  type SortingState,
   useReactTable,
-  VisibilityState,
-} from "@tanstack/react-table";
+  type VisibilityState,
+} from '@tanstack/react-table'
 import {
   ArrowUpDown,
   ChevronDown,
@@ -27,9 +26,9 @@ import {
   Phone,
   Tag,
   MapPin,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+} from 'lucide-react'
+import Button from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -38,8 +37,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -47,41 +46,42 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useDashboardStore } from "@/stores/dashboard/dashboard-store";
-import { cn } from "@/lib/utils";
-import type { Person } from "@/mock-data/people";
+} from '@/components/ui/table'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { useDashboardStore } from '@/stores/dashboard/dashboard-store'
+import { cn } from '@/lib/utils'
+import type { Person } from '@/mock-data/people'
 
 const statusIcons = {
   active: CheckCircle2,
   offline: CircleDashed,
   away: CalendarIcon,
-};
+}
 
 const statusColors = {
-  active: "text-green-600",
-  offline: "text-muted-foreground",
-  away: "text-yellow-600",
-};
+  active: 'text-green-600',
+  offline: 'text-muted-foreground',
+  away: 'text-yellow-600',
+}
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const columns: ColumnDef<Person>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) => (
       <Checkbox
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onCheckedChange={value => row.toggleSelected(!!value)}
         aria-label="Select row"
       />
     ),
@@ -89,21 +89,21 @@ export const columns: ColumnDef<Person>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
+    accessorKey: 'name',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className="h-8 px-2"
         >
           Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      );
+      )
     },
     cell: ({ row }) => {
-      const person = row.original;
+      const person = row.original
       return (
         <div className="flex items-center gap-2">
           <Avatar className="size-5">
@@ -114,11 +114,11 @@ export const columns: ColumnDef<Person>[] = [
           </Avatar>
           <span className="text-sm text-foreground">{person.name}</span>
         </div>
-      );
+      )
     },
   },
   {
-    accessorKey: "jobTitle",
+    accessorKey: 'jobTitle',
     header: () => (
       <div className="flex items-center gap-2">
         <Briefcase className="size-4 text-muted-foreground" />
@@ -126,11 +126,11 @@ export const columns: ColumnDef<Person>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className="text-sm text-foreground">{row.getValue("jobTitle")}</div>
+      <div className="text-sm text-foreground">{row.getValue('jobTitle')}</div>
     ),
   },
   {
-    accessorKey: "status",
+    accessorKey: 'status',
     header: () => (
       <div className="flex items-center gap-2">
         <CircleDashed className="size-4 text-muted-foreground" />
@@ -138,43 +138,43 @@ export const columns: ColumnDef<Person>[] = [
       </div>
     ),
     filterFn: (row, id, value) => {
-      const status = row.getValue(id) as Person["status"];
-      return value.includes(status);
+      const status = row.getValue(id) as Person['status']
+      return value.includes(status)
     },
     cell: ({ row }) => {
-      const status = row.getValue("status") as Person["status"];
-      const StatusIcon = statusIcons[status];
+      const status = row.getValue('status') as Person['status']
+      const StatusIcon = statusIcons[status]
       return (
         <div className="flex items-center gap-1.5">
-          <StatusIcon className={cn("size-3.5", statusColors[status])} />
+          <StatusIcon className={cn('size-3.5', statusColors[status])} />
           <span className="text-sm capitalize text-foreground">{status}</span>
         </div>
-      );
+      )
     },
   },
   {
-    accessorKey: "email",
+    accessorKey: 'email',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className="h-8 px-2"
         >
           <Mail className="mr-2 h-4 w-4 text-muted-foreground" />
           Email
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      );
+      )
     },
     cell: ({ row }) => (
       <div className="text-sm text-foreground lowercase">
-        {row.getValue("email")}
+        {row.getValue('email')}
       </div>
     ),
   },
   {
-    accessorKey: "phone",
+    accessorKey: 'phone',
     header: () => (
       <div className="flex items-center gap-2">
         <Phone className="size-4 text-muted-foreground" />
@@ -182,11 +182,11 @@ export const columns: ColumnDef<Person>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className="text-sm text-foreground">{row.getValue("phone")}</div>
+      <div className="text-sm text-foreground">{row.getValue('phone')}</div>
     ),
   },
   {
-    accessorKey: "tags",
+    accessorKey: 'tags',
     header: () => (
       <div className="flex items-center gap-2">
         <Tag className="size-4 text-muted-foreground" />
@@ -194,10 +194,10 @@ export const columns: ColumnDef<Person>[] = [
       </div>
     ),
     cell: ({ row }) => {
-      const tags = row.getValue("tags") as string[];
+      const tags = row.getValue('tags') as string[]
       return (
         <div className="flex flex-wrap gap-1">
-          {tags.map((tag) => (
+          {tags.map(tag => (
             <span
               key={tag}
               className="rounded-md border border-border bg-muted px-2 py-0.5 text-xs text-foreground"
@@ -206,11 +206,11 @@ export const columns: ColumnDef<Person>[] = [
             </span>
           ))}
         </div>
-      );
+      )
     },
   },
   {
-    accessorKey: "address",
+    accessorKey: 'address',
     header: () => (
       <div className="flex items-center gap-2">
         <MapPin className="size-4 text-muted-foreground" />
@@ -218,14 +218,14 @@ export const columns: ColumnDef<Person>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className="text-sm text-foreground">{row.getValue("address")}</div>
+      <div className="text-sm text-foreground">{row.getValue('address')}</div>
     ),
   },
   {
-    id: "actions",
+    id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const person = row.original;
+      const person = row.original
 
       return (
         <DropdownMenu>
@@ -247,47 +247,47 @@ export const columns: ColumnDef<Person>[] = [
             <DropdownMenuItem>View details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      );
+      )
     },
   },
-];
+]
 
 export function PeopleTable() {
-  const { people } = useDashboardStore();
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const { people } = useDashboardStore()
+  const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  );
+  )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+    React.useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = React.useState({})
 
   // Fonction pour obtenir les filtres actifs
   const getStatusFilter = () => {
-    const statusFilter = columnFilters.find((f) => f.id === "status");
-    return statusFilter?.value as string[] | undefined;
-  };
+    const statusFilter = columnFilters.find(f => f.id === 'status')
+    return statusFilter?.value as string[] | undefined
+  }
 
-  const isStatusFiltered = (status: Person["status"]) => {
-    const statusFilter = getStatusFilter();
-    return statusFilter?.includes(status) ?? true;
-  };
+  const isStatusFiltered = (status: Person['status']) => {
+    const statusFilter = getStatusFilter()
+    return statusFilter?.includes(status) ?? true
+  }
 
-  const toggleStatusFilter = (status: Person["status"]) => {
-    const currentFilter = getStatusFilter();
+  const toggleStatusFilter = (status: Person['status']) => {
+    const currentFilter = getStatusFilter()
     const newFilter = currentFilter
       ? currentFilter.includes(status)
-        ? currentFilter.filter((s) => s !== status)
+        ? currentFilter.filter(s => s !== status)
         : [...currentFilter, status]
-      : [status];
+      : [status]
 
-    setColumnFilters((prev) => {
-      const otherFilters = prev.filter((f) => f.id !== "status");
+    setColumnFilters(prev => {
+      const otherFilters = prev.filter(f => f.id !== 'status')
       return newFilter.length > 0
-        ? [...otherFilters, { id: "status", value: newFilter }]
-        : otherFilters;
-    });
-  };
+        ? [...otherFilters, { id: 'status', value: newFilter }]
+        : otherFilters
+    })
+  }
 
   const table = useReactTable({
     data: people,
@@ -306,7 +306,7 @@ export function PeopleTable() {
       columnVisibility,
       rowSelection,
     },
-  });
+  })
 
   return (
     <div className="rounded-xl border border-border bg-card">
@@ -317,10 +317,10 @@ export function PeopleTable() {
             <Input
               placeholder="Filter emails..."
               value={
-                (table.getColumn("email")?.getFilterValue() as string) ?? ""
+                (table.getColumn('email')?.getFilterValue() as string) ?? ''
               }
-              onChange={(event) =>
-                table.getColumn("email")?.setFilterValue(event.target.value)
+              onChange={event =>
+                table.getColumn('email')?.setFilterValue(event.target.value)
               }
               className="h-7 pl-8 w-full"
             />
@@ -345,8 +345,8 @@ export function PeopleTable() {
               <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuCheckboxItem
-                checked={isStatusFiltered("active")}
-                onCheckedChange={() => toggleStatusFilter("active")}
+                checked={isStatusFiltered('active')}
+                onCheckedChange={() => toggleStatusFilter('active')}
               >
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="size-3.5 text-green-600" />
@@ -354,8 +354,8 @@ export function PeopleTable() {
                 </div>
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
-                checked={isStatusFiltered("offline")}
-                onCheckedChange={() => toggleStatusFilter("offline")}
+                checked={isStatusFiltered('offline')}
+                onCheckedChange={() => toggleStatusFilter('offline')}
               >
                 <div className="flex items-center gap-2">
                   <CircleDashed className="size-3.5 text-muted-foreground" />
@@ -363,8 +363,8 @@ export function PeopleTable() {
                 </div>
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
-                checked={isStatusFiltered("away")}
-                onCheckedChange={() => toggleStatusFilter("away")}
+                checked={isStatusFiltered('away')}
+                onCheckedChange={() => toggleStatusFilter('away')}
               >
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="size-3.5 text-yellow-600" />
@@ -397,20 +397,20 @@ export function PeopleTable() {
             <DropdownMenuContent align="end">
               {table
                 .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
+                .filter(column => column.getCanHide())
+                .map(column => {
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
+                      onCheckedChange={value =>
                         column.toggleVisibility(!!value)
                       }
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
-                  );
+                  )
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -428,9 +428,9 @@ export function PeopleTable() {
       <div className="overflow-hidden">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
@@ -440,19 +440,19 @@ export function PeopleTable() {
                             header.getContext()
                           )}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && 'selected'}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -478,7 +478,7 @@ export function PeopleTable() {
 
       <div className="flex items-center justify-end space-x-2 border-t border-border p-4">
         <div className="text-muted-foreground flex-1 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredSelectedRowModel().rows.length} of{' '}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="space-x-2">
@@ -501,5 +501,5 @@ export function PeopleTable() {
         </div>
       </div>
     </div>
-  );
+  )
 }
