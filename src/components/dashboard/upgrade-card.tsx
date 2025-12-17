@@ -1,7 +1,5 @@
-
-import { AlertCircle, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { AlertCircle } from 'lucide-react'
+import Button from '@/components/ui/button'
 
 export function UpgradeCard() {
   return (
@@ -20,14 +18,8 @@ export function UpgradeCard() {
           size="sm"
           className="h-7 w-full justify-center gap-1.5 text-xs"
           asChild
-        >
-          <Link href="https://square.lndev.me" target="_blank" rel="noopener noreferrer">
-            square.lndev.me
-            <ArrowRight className="size-3.5" />
-          </Link>
-        </Button>
+        ></Button>
       </div>
     </div>
-  );
+  )
 }
-

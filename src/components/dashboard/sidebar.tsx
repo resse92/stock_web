@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState } from 'react'
 import {
   Search,
   Bell,
@@ -16,7 +15,7 @@ import {
   HelpCircle,
   Check,
   Plus,
-} from "lucide-react";
+} from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -29,29 +28,29 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/dropdown-menu'
+import Button from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Kbd } from "@/components/ui/kbd";
-import { cn } from "@/lib/utils";
-import { UpgradeCard } from "./upgrade-card";
+} from '@/components/ui/collapsible'
+import { Kbd } from '@/components/ui/kbd'
+import { cn } from '@/lib/utils'
+import { UpgradeCard } from './upgrade-card'
 
 export function DashboardSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const [favoritesOpen, setFavoritesOpen] = useState(true);
+  const [favoritesOpen, setFavoritesOpen] = useState(true)
 
   return (
     <Sidebar className="lg:border-r-0!" collapsible="offcanvas" {...props}>
@@ -205,8 +204,8 @@ export function DashboardSidebar({
                 <span>Favorites</span>
                 <ChevronDown
                   className={cn(
-                    "size-3 transition-transform ml-auto",
-                    favoritesOpen && "rotate-180"
+                    'size-3 transition-transform ml-auto',
+                    favoritesOpen && 'rotate-180'
                   )}
                 />
               </SidebarGroupLabel>
@@ -266,5 +265,5 @@ export function DashboardSidebar({
         <UpgradeCard />
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }
