@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { format, parseISO, startOfMonth, isAfter } from 'date-fns'
 import type { DayEventHandler } from 'react-day-picker'
 import { Calendar as CalendarIcon, Loader2 } from 'lucide-react'
