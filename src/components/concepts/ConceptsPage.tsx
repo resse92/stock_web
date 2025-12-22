@@ -192,7 +192,7 @@ export const ConceptsPage = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1 min-h-0">
-              <div className="border rounded-lg divide-y overflow-hidden h-full">
+              <div className="border rounded-lg overflow-hidden h-full">
                 {conceptsLoading ? (
                   <div className="flex items-center justify-center py-10 text-muted-foreground">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -201,19 +201,21 @@ export const ConceptsPage = () => {
                 ) : filteredConcepts.length === 0 ? (
                   <div className="p-4 text-muted-foreground">未找到匹配的概念</div>
                 ) : (
-                  <div className="max-h-[520px] overflow-y-auto">
-                    {filteredConcepts.map(concept => (
-                      <label
-                        key={concept.id}
-                        className="flex items-center justify-between px-4 py-3 hover:bg-muted/50 cursor-pointer"
-                      >
-                        <div className="flex items-center gap-3">
-                          <Checkbox checked={selectedConceptIds.includes(concept.id)} onCheckedChange={() => toggleConcept(concept.id)} />
-                          <span className="font-medium">{concept.name}</span>
-                        </div>
-                        {selectedConceptIds.includes(concept.id) && <Badge>已选</Badge>}
-                      </label>
-                    ))}
+                  <div className="max-h-[520px] overflow-y-auto p-3">
+                    <div className="flex flex-wrap gap-2">
+                      {filteredConcepts.map(concept => {
+                        const selected = selectedConceptIds.includes(concept.id)
+                        return (
+                          <label
+                            key={concept.id}
+                            className={`inline-flex items-center gap-2 rounded-md border px-2 py-1 text-sm cursor-pointer transition-colors ${selected ? 'border-primary bg-primary/10' : 'border-transparent hover:bg-muted'}`}
+                          >
+                            <Checkbox checked={selected} onCheckedChange={() => toggleConcept(concept.id)} />
+                            <span className="font-medium leading-none">{concept.name}</span>
+                          </label>
+                        )
+                      })}
+                    </div>
                   </div>
                 )}
               </div>
