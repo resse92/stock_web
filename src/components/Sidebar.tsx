@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Crown, Globe2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Home, Crown, Globe2, ChevronLeft, ChevronRight, Layers } from 'lucide-react'
 
 import Button from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -21,6 +21,7 @@ import { useSidebar } from '@/components/ui/sidebar-context'
 const navItems = [
   { path: '/', label: 'Dashboard', icon: Home },
   { path: '/rps', label: 'RPS', icon: Crown },
+  { path: '/concepts', label: '概念选股', icon: Layers },
   { path: '/web-research', label: '网页调研', icon: Globe2 },
 ]
 

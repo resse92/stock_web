@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Sidebar } from '@/components/Sidebar'
 import { Dashboard } from '@/components/Dashboard'
 import { RPSPage } from '@/components/rps/Page'
+import { ConceptsPage } from '@/components/concepts/ConceptsPage'
 import { NotFound } from '@/components/NotFound'
 import { WebResearchPage } from '@/components/deepseek/WebResearchPage'
 import {
@@ -37,6 +38,7 @@ const AppLayout = () => {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/rps" element={<RPSPage />} />
+          <Route path="/concepts" element={<ConceptsPage />} />
           <Route path="/web-research" element={<WebResearchPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
