@@ -3,7 +3,13 @@ import { Layers, Loader2, Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import Button from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import {
@@ -94,23 +100,29 @@ export const ConceptsPage = () => {
           throw new Error(error.message)
         }
 
-        const grouped = (data ?? []).reduce(
-          (acc, item) => {
-            const existing = acc.get(item.stock_code) ?? { conceptIds: new Set<number>(), latestTradeDate: '' }
-            existing.conceptIds.add(item.concept_id)
+        const grouped = (data ?? []).reduce((acc, item) => {
+          const existing = acc.get(item.stock_code) ?? {
+            conceptIds: new Set<number>(),
+            latestTradeDate: '',
+          }
+          existing.conceptIds.add(item.concept_id)
 
-            if (!existing.latestTradeDate || (item.trade_date && item.trade_date > existing.latestTradeDate)) {
-              existing.latestTradeDate = item.trade_date ?? existing.latestTradeDate
-            }
+          if (
+            !existing.latestTradeDate ||
+            (item.trade_date && item.trade_date > existing.latestTradeDate)
+          ) {
+            existing.latestTradeDate =
+              item.trade_date ?? existing.latestTradeDate
+          }
 
-            acc.set(item.stock_code, existing)
-            return acc
-          },
-          new Map<string, { conceptIds: Set<number>; latestTradeDate?: string }>()
-        )
+          acc.set(item.stock_code, existing)
+          return acc
+        }, new Map<string, { conceptIds: Set<number>; latestTradeDate?: string }>())
 
         const matched = Array.from(grouped.entries())
-          .filter(([, value]) => selectedConceptIds.every(id => value.conceptIds.has(id)))
+          .filter(([, value]) =>
+            selectedConceptIds.every(id => value.conceptIds.has(id))
+          )
           .map(([stockCode, value]) => ({
             stockCode,
             conceptCount: value.conceptIds.size,
@@ -144,7 +156,9 @@ export const ConceptsPage = () => {
 
   const toggleConcept = (id: number) => {
     setSelectedConceptIds(prev =>
-      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id].sort((a, b) => a - b)
+      prev.includes(id)
+        ? prev.filter(item => item !== id)
+        : [...prev, id].sort((a, b) => a - b)
     )
   }
 
@@ -160,36 +174,37 @@ export const ConceptsPage = () => {
             <Layers className="h-8 w-8 text-primary" />
             <div>
               <h1 className="text-3xl font-bold leading-tight">A股概念库</h1>
-              <p className="text-muted-foreground">查看并筛选同花顺概念，匹配关联股票</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="搜索概念"
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                className="pl-10 w-64"
-              />
-            </div>
-            <Button variant="outline" onClick={clearSelections} disabled={selectedConceptIds.length === 0}>
-              清空选择
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            onClick={clearSelections}
+            disabled={selectedConceptIds.length === 0}
+          >
+            清空选择
+          </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 min-h-0">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0">
           <Card className="lg:col-span-5 flex flex-col min-h-0">
             <CardHeader className="space-y-1">
-              <CardTitle>全部概念</CardTitle>
-              <CardDescription>
-                {conceptsLoading
-                  ? '正在加载概念...'
-                  : conceptsError
-                    ? conceptsError
-                    : `共 ${concepts.length} 个概念，可多选叠加筛选股票`}
-              </CardDescription>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <CardTitle>全部概念</CardTitle>
+                  <CardDescription>
+                    {conceptsLoading ? '正在加载概念...' : conceptsError}
+                  </CardDescription>
+                </div>
+                <div className="relative w-48">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="搜索概念"
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                    className="pl-10 h-9"
+                  />
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="flex-1 min-h-0">
               <div className="border rounded-lg overflow-hidden h-full">
@@ -199,9 +214,11 @@ export const ConceptsPage = () => {
                     正在加载...
                   </div>
                 ) : filteredConcepts.length === 0 ? (
-                  <div className="p-4 text-muted-foreground">未找到匹配的概念</div>
+                  <div className="p-4 text-muted-foreground">
+                    未找到匹配的概念
+                  </div>
                 ) : (
-                  <div className="max-h-[520px] overflow-y-auto p-3">
+                  <div className="max-h-[96px] lg:max-h-[520px] overflow-y-auto p-3">
                     <div className="flex flex-wrap gap-2">
                       {filteredConcepts.map(concept => {
                         const selected = selectedConceptIds.includes(concept.id)
@@ -210,8 +227,13 @@ export const ConceptsPage = () => {
                             key={concept.id}
                             className={`inline-flex items-center gap-2 rounded-md border px-2 py-1 text-sm cursor-pointer transition-colors ${selected ? 'border-primary bg-primary/10' : 'border-transparent hover:bg-muted'}`}
                           >
-                            <Checkbox checked={selected} onCheckedChange={() => toggleConcept(concept.id)} />
-                            <span className="font-medium leading-none">{concept.name}</span>
+                            <Checkbox
+                              checked={selected}
+                              onCheckedChange={() => toggleConcept(concept.id)}
+                            />
+                            <span className="font-medium leading-none">
+                              {concept.name}
+                            </span>
                           </label>
                         )
                       })}
@@ -229,8 +251,8 @@ export const ConceptsPage = () => {
                   <CardTitle>匹配股票</CardTitle>
                   <CardDescription>
                     {selectedConceptIds.length === 0
-                      ? '选择左侧概念后展示匹配的股票'
-                      : `已选择 ${selectedConceptIds.length} 个概念，显示同时属于这些概念的股票`}
+                      ? '选择概念后展示匹配的股票'
+                      : `已选择 ${selectedConceptIds.length} 个概念`}
                   </CardDescription>
                 </div>
                 <div className="flex flex-wrap gap-2 justify-end">
@@ -238,7 +260,11 @@ export const ConceptsPage = () => {
                     const concept = concepts.find(item => item.id === id)
                     if (!concept) return null
                     return (
-                      <Badge key={id} variant="secondary" className="flex items-center gap-1">
+                      <Badge
+                        key={id}
+                        variant="secondary"
+                        className="flex items-center gap-1"
+                      >
                         {concept.name}
                         <button
                           type="button"
@@ -254,7 +280,7 @@ export const ConceptsPage = () => {
               </div>
             </CardHeader>
             <CardContent className="flex-1 min-h-0">
-              <div className="border rounded-lg h-full flex flex-col overflow-hidden">
+              <div className="border rounded-lg h-full flex flex-1 flex-col overflow-hidden">
                 {stocksLoading ? (
                   <div className="flex items-center justify-center py-10 text-muted-foreground">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -278,16 +304,14 @@ export const ConceptsPage = () => {
                       <TableHeader>
                         <TableRow>
                           <TableHead className="w-32">股票代码</TableHead>
-                          <TableHead>覆盖概念数量</TableHead>
-                          <TableHead className="w-40">最新交易日</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {matchedStocks.map(stock => (
                           <TableRow key={stock.stockCode}>
-                            <TableCell className="font-mono font-medium">{stock.stockCode}</TableCell>
-                            <TableCell>{stock.conceptCount}</TableCell>
-                            <TableCell>{stock.latestTradeDate ?? '-'}</TableCell>
+                            <TableCell className="font-mono font-medium">
+                              {stock.stockCode}
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
