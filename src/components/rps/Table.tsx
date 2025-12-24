@@ -54,6 +54,22 @@ export const RPSTable: React.FC<RPSTableProps> = ({
         ),
         size: 100,
       }),
+      columnHelper.accessor(
+        row => row.concepts?.join('、') ?? row.concept ?? '',
+        {
+          id: 'concepts',
+          header: '概念',
+          cell: info => {
+            const value = info.getValue()
+            return (
+              <div className="truncate" title={value || '暂无概念信息'}>
+                {value || '—'}
+              </div>
+            )
+          },
+          size: 200,
+        }
+      ),
       columnHelper.accessor('rps3', {
         header: 'RPS3',
         cell: info => (
