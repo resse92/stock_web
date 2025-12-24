@@ -11,6 +11,15 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { Card, CardContent } from '@/components/ui/card'
 import type { RpsItemData } from '@/types/stock'
 import { Loader2 } from 'lucide-react'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 
 const columnHelper = createColumnHelper<RpsItemData>()
 
@@ -26,6 +35,11 @@ export const RPSTable: React.FC<RPSTableProps> = ({
   error = null,
 }) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
+  const [conceptDetail, setConceptDetail] = React.useState<{
+    code: string
+    name: string
+    concepts: string[]
+  } | null>(null)
 
   // Use prop data directly, no fallback to demo data
   const tableData = useMemo(() => {
@@ -41,23 +55,75 @@ export const RPSTable: React.FC<RPSTableProps> = ({
       columnHelper.accessor('code', {
         header: 'Code',
         cell: info => (
-          <div className="font-semibold text-primary">{info.getValue()}</div>
+          <div className="font-semibold text-primary h-full flex items-center">
+            {info.getValue()}
+          </div>
         ),
         size: 100,
       }),
       columnHelper.accessor('name', {
         header: '公司',
         cell: info => (
-          <div className="truncate" title={info.getValue()}>
+          <div
+            className="truncate h-full flex items-center"
+            title={info.getValue()}
+          >
             {info.getValue()}
           </div>
         ),
         size: 100,
       }),
+      columnHelper.accessor(
+        row => row.concepts?.join('、') ?? row.concept ?? '',
+        {
+          id: 'concepts',
+          header: '概念',
+          cell: info => {
+            const concepts =
+              info.row.original.concepts ??
+              (info.row.original.concept ? [info.row.original.concept] : [])
+            const value = concepts.join('、')
+            const hasConcepts = concepts.length > 0
+            return (
+              <button
+                type="button"
+                className={cn(
+                  'text-left w-full whitespace-normal break-words leading-5 overflow-hidden max-h-10 h-full flex items-center',
+                  hasConcepts
+                    ? 'text-primary hover:underline'
+                    : 'text-muted-foreground cursor-not-allowed'
+                )}
+                title={hasConcepts ? value : '暂无概念信息'}
+                style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                }}
+                onClick={() =>
+                  hasConcepts &&
+                  setConceptDetail({
+                    code: info.row.original.code,
+                    name: info.row.original.name,
+                    concepts,
+                  })
+                }
+                disabled={!hasConcepts}
+              >
+                {hasConcepts ? value : '—'}
+              </button>
+            )
+          },
+          size: 240,
+        }
+      ),
       columnHelper.accessor('rps3', {
         header: 'RPS3',
         cell: info => (
-          <div className="truncate" title={info.getValue().toFixed(2)}>
+          <div
+            className="truncate h-full flex items-center"
+            title={info.getValue().toFixed(2)}
+          >
             {info.getValue().toFixed(2)}
           </div>
         ),
@@ -67,7 +133,10 @@ export const RPSTable: React.FC<RPSTableProps> = ({
         header: 'RPS5',
         cell: info => {
           return (
-            <div className="truncate" title={info.getValue().toFixed(2)}>
+            <div
+              className="truncate h-full flex items-center"
+              title={info.getValue().toFixed(2)}
+            >
               {info.getValue().toFixed(2)}
             </div>
           )
@@ -78,7 +147,10 @@ export const RPSTable: React.FC<RPSTableProps> = ({
         header: 'RPS15',
         cell: info => {
           return (
-            <div className="truncate" title={info.getValue().toFixed(2)}>
+            <div
+              className="truncate h-full flex items-center"
+              title={info.getValue().toFixed(2)}
+            >
               {info.getValue().toFixed(2)}
             </div>
           )
@@ -88,25 +160,37 @@ export const RPSTable: React.FC<RPSTableProps> = ({
       columnHelper.accessor('rps30', {
         header: 'RPS30',
         cell: info => (
-          <div className="font-mono">{info.getValue().toFixed(2)}</div>
+          <div className="font-mono h-full flex items-center">
+            {info.getValue().toFixed(2)}
+          </div>
         ),
         size: 100,
       }),
       columnHelper.accessor('listed_days', {
         header: '上市天数',
         cell: info => (
-          <div className="font-mono">{info.getValue().toFixed(2)}</div>
+          <div className="font-mono h-full flex items-center">
+            {info.getValue().toFixed(2)}
+          </div>
         ),
         size: 100,
       }),
       columnHelper.accessor('market_cap', {
         header: '市值(亿)',
-        cell: info => <div className="font-mono">{info.getValue()}</div>,
+        cell: info => (
+          <div className="font-mono h-full flex items-center">
+            {info.getValue()}
+          </div>
+        ),
         size: 100,
       }),
       columnHelper.accessor('circulating_market_cap', {
         header: '流通市值(亿)',
-        cell: info => <div className="font-mono">{info.getValue()}</div>,
+        cell: info => (
+          <div className="font-mono h-full flex items-center">
+            {info.getValue()}
+          </div>
+        ),
         size: 100,
       }),
     ],
@@ -177,126 +261,161 @@ export const RPSTable: React.FC<RPSTableProps> = ({
   }
 
   return (
-    <Card className="w-full h-full flex flex-col">
-      <CardContent className="p-0 flex-1 overflow-hidden">
-        <div className="relative h-full">
-          {/* 统一的滚动容器，包含Header和Body */}
-          <div
-            ref={parentRef}
-            className="h-full overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
-          >
-            {/* Fixed Header - 现在在滚动容器内部 */}
-            <div className="sticky top-0 z-20 bg-background border-b">
-              <table
-                className="w-full text-sm"
-                style={{ tableLayout: 'fixed', width: '100%' }}
+    <>
+      <Card className="w-full h-full flex flex-col">
+        <CardContent className="p-0 flex-1 overflow-hidden">
+          <div className="relative h-full">
+            {/* 统一的滚动容器，包含Header和Body */}
+            <div
+              ref={parentRef}
+              className="h-full overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+            >
+              {/* Fixed Header - 现在在滚动容器内部 */}
+              <div className="sticky top-0 z-20 bg-background border-b">
+                <table
+                  className="w-full min-w-[1100px] text-sm"
+                  style={{ tableLayout: 'fixed', width: '100%' }}
+                >
+                  <colgroup>
+                    {columns.map(column => (
+                      <col
+                        key={column.id}
+                        style={{ width: `${column.size || 100}px` }}
+                      />
+                    ))}
+                  </colgroup>
+                  <thead>
+                    {table.getHeaderGroups().map(headerGroup => (
+                      <tr key={headerGroup.id}>
+                        {headerGroup.headers.map(header => (
+                          <th
+                            key={header.id}
+                            className="px-3 py-3 text-left bg-muted/50 border-r border-border/50 bg-gray-100"
+                          >
+                            {header.isPlaceholder ? null : (
+                              <div
+                                {...{
+                                  className: header.column.getCanSort()
+                                    ? 'cursor-pointer select-none flex items-center'
+                                    : '',
+                                  onClick:
+                                    header.column.getToggleSortingHandler(),
+                                }}
+                              >
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                                {{
+                                  asc: ' 🔼',
+                                  desc: ' 🔽',
+                                }[header.column.getIsSorted() as string] ??
+                                  null}
+                              </div>
+                            )}
+                          </th>
+                        ))}
+                      </tr>
+                    ))}
+                  </thead>
+                </table>
+              </div>
+
+              {/* Scrollable Body */}
+              <div
+                style={{
+                  height: `${virtualizer.getTotalSize()}px`,
+                  position: 'relative',
+                }}
               >
-                <colgroup>
-                  {columns.map(column => (
-                    <col
-                      key={column.id}
-                      style={{ width: `${column.size || 100}px` }}
-                    />
-                  ))}
-                </colgroup>
-                <thead>
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map(header => (
-                        <th
-                          key={header.id}
-                          className="px-3 py-3 text-left bg-muted/50 border-r border-border/50 bg-gray-100"
+                <table
+                  className="w-full min-w-[1100px] text-sm"
+                  style={{ tableLayout: 'fixed', width: '100%' }}
+                >
+                  <colgroup>
+                    {columns.map(column => (
+                      <col
+                        key={column.id}
+                        style={{ width: `${column.size || 100}px` }}
+                      />
+                    ))}
+                  </colgroup>
+                  <tbody>
+                    {virtualizer.getVirtualItems().map(virtualRow => {
+                      const row = rows[virtualRow.index]
+                      return (
+                        <tr
+                          key={row.id}
+                          className="border-b hover:bg-muted/50 transition-colors"
+                          style={{
+                            height: `${virtualRow.size}px`,
+                            transform: `translateY(${virtualRow.start}px)`,
+                            position: 'absolute',
+                            width: '100%',
+                            left: 0,
+                            right: 0,
+                            display: 'table',
+                            tableLayout: 'fixed',
+                          }}
                         >
-                          {header.isPlaceholder ? null : (
-                            <div
-                              {...{
-                                className: header.column.getCanSort()
-                                  ? 'cursor-pointer select-none flex items-center'
-                                  : '',
-                                onClick:
-                                  header.column.getToggleSortingHandler(),
+                          {row.getVisibleCells().map(cell => (
+                            <td
+                              key={cell.id}
+                              className="px-3 py-0 border-r border-border/50 align-middle"
+                              style={{
+                                width: `${cell.column.getSize()}px`,
+                                minWidth: `${cell.column.getSize()}px`,
+                                maxWidth: `${cell.column.getSize()}px`,
+                                height: `${virtualRow.size}px`,
                               }}
                             >
                               {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
+                                cell.column.columnDef.cell,
+                                cell.getContext()
                               )}
-                              {{
-                                asc: ' 🔼',
-                                desc: ' 🔽',
-                              }[header.column.getIsSorted() as string] ?? null}
-                            </div>
-                          )}
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-              </table>
-            </div>
-
-            {/* Scrollable Body */}
-            <div
-              style={{
-                height: `${virtualizer.getTotalSize()}px`,
-                position: 'relative',
-              }}
-            >
-              <table
-                className="w-full text-sm"
-                style={{ tableLayout: 'fixed', width: '100%' }}
-              >
-                <colgroup>
-                  {columns.map(column => (
-                    <col
-                      key={column.id}
-                      style={{ width: `${column.size || 100}px` }}
-                    />
-                  ))}
-                </colgroup>
-                <tbody>
-                  {virtualizer.getVirtualItems().map(virtualRow => {
-                    const row = rows[virtualRow.index]
-                    return (
-                      <tr
-                        key={row.id}
-                        className="border-b hover:bg-muted/50 transition-colors"
-                        style={{
-                          height: `${virtualRow.size}px`,
-                          transform: `translateY(${virtualRow.start}px)`,
-                          position: 'absolute',
-                          width: '100%',
-                          left: 0,
-                          right: 0,
-                          display: 'table',
-                          tableLayout: 'fixed',
-                        }}
-                      >
-                        {row.getVisibleCells().map(cell => (
-                          <td
-                            key={cell.id}
-                            className="px-3 py-3 border-r border-border/50"
-                            style={{
-                              width: `${cell.column.getSize()}px`,
-                              minWidth: `${cell.column.getSize()}px`,
-                              maxWidth: `${cell.column.getSize()}px`,
-                            }}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+                            </td>
+                          ))}
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      <Sheet
+        open={!!conceptDetail}
+        onOpenChange={open => {
+          if (!open) setConceptDetail(null)
+        }}
+      >
+        <SheetContent
+          side="right"
+          className="sm:max-w-md w-full bg-white data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right"
+        >
+          <SheetHeader>
+            <SheetTitle>
+              {conceptDetail?.name}（{conceptDetail?.code}）
+            </SheetTitle>
+            <SheetDescription>查看该股票的完整概念列表</SheetDescription>
+          </SheetHeader>
+          <div className="p-4 space-y-3">
+            {conceptDetail?.concepts?.length ? (
+              <div className="flex flex-wrap gap-2">
+                {conceptDetail.concepts.map(concept => (
+                  <Badge key={concept} variant="secondary">
+                    {concept}
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-sm">暂无概念信息</p>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+    </>
   )
 }

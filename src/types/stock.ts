@@ -6,6 +6,8 @@ export interface RpsResp {
 export interface RpsItemData {
   code: string
   name: string
+  concept?: string
+  concepts?: string[]
   rps3: number
   rps5: number
   rps15: number
