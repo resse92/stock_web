@@ -7,6 +7,7 @@ import { RPSPage } from '@/components/rps/Page'
 import { ConceptsPage } from '@/components/concepts/ConceptsPage'
 import { NotFound } from '@/components/NotFound'
 import { WebResearchPage } from '@/components/deepseek/WebResearchPage'
+import { SectorRotationPage } from '@/components/sector-rotation/SectorRotationPage'
 import {
   SidebarProvider as UISidebarProvider,
   SidebarInset,
@@ -39,6 +40,7 @@ const AppLayout = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/rps" element={<RPSPage />} />
           <Route path="/concepts" element={<ConceptsPage />} />
+          <Route path="/sector-rotation" element={<SectorRotationPage />} />
           <Route path="/web-research" element={<WebResearchPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
