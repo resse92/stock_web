@@ -31,7 +31,7 @@ export const RPSPage: React.FC = () => {
 
       const { data: stockConceptRows, error: stockConceptError } =
         await supabase
-          .from<StockConceptRow>('ths_stock_concepts')
+          .from('ths_stock_concepts')
           .select('stock_code, concept_id')
           .in('stock_code', codes)
 
@@ -39,14 +39,17 @@ export const RPSPage: React.FC = () => {
         throw new Error(`加载股票概念失败: ${stockConceptError.message}`)
       }
 
+      const typedStockConceptRows = (stockConceptRows ??
+        []) as StockConceptRow[]
+
       const conceptIds = Array.from(
-        new Set((stockConceptRows ?? []).map(row => row.concept_id))
+        new Set(typedStockConceptRows.map(row => row.concept_id))
       )
 
       if (conceptIds.length === 0) return {}
 
       const { data: conceptRows, error: conceptError } = await supabase
-        .from<ConceptRow>('ths_concepts')
+        .from('ths_concepts')
         .select('id, name')
         .in('id', conceptIds)
 
@@ -54,11 +57,13 @@ export const RPSPage: React.FC = () => {
         throw new Error(`加载概念名称失败: ${conceptError.message}`)
       }
 
+      const typedConceptRows = (conceptRows ?? []) as ConceptRow[]
+
       const conceptNameMap = new Map(
-        (conceptRows ?? []).map(row => [row.id, row.name])
+        typedConceptRows.map(row => [row.id, row.name])
       )
 
-      return (stockConceptRows ?? []).reduce<Record<string, string[]>>(
+      return typedStockConceptRows.reduce<Record<string, string[]>>(
         (acc, row) => {
           const conceptName = conceptNameMap.get(row.concept_id)
           if (!conceptName) return acc
