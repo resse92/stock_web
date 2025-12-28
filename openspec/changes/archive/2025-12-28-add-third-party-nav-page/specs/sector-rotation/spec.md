@@ -1,8 +1,10 @@
-# sector-rotation Specification
+## RENAMED Requirements
 
-## Purpose
-TBD - created by archiving change add-sector-rotation-tab. Update Purpose after archive.
-## Requirements
+- FROM: `### Requirement: 板块轮动嵌入页`
+- TO: `### Requirement: 第三方导航页`
+
+## MODIFIED Requirements
+
 ### Requirement: 第三方导航页
 应用 SHALL 提供一个“第三方导航”页面，集中展示外部行情/复盘链接，并替换原先的板块联动内嵌页。
 
@@ -21,4 +23,3 @@ TBD - created by archiving change add-sector-rotation-tab. Update Purpose after 
 #### Scenario: 外链新标签打开
 - **WHEN** 用户点击上述任一链接
 - **THEN** 目标在新标签页打开（`target="_blank"` 且 `rel="noreferrer"`），当前导航页保持可见且无需 iframe 嵌入
-
