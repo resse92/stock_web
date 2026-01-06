@@ -12,12 +12,12 @@ import { Card, CardContent } from '@/components/ui/card'
 import type { RpsItemData } from '@/types/stock'
 import { Loader2 } from 'lucide-react'
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
@@ -52,26 +52,19 @@ export const RPSTable: React.FC<RPSTableProps> = ({
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('code', {
-        header: 'Code',
-        cell: info => (
-          <div className="font-semibold text-primary h-full flex items-center">
-            {info.getValue()}
-          </div>
-        ),
-        size: 100,
-      }),
       columnHelper.accessor('name', {
         header: '公司',
-        cell: info => (
-          <div
-            className="truncate h-full flex items-center"
-            title={info.getValue()}
-          >
-            {info.getValue()}
-          </div>
-        ),
-        size: 100,
+        cell: info => {
+          const name = info.getValue()
+          const code = info.row.original.code
+          const value = `${name}(${code})`
+          return (
+            <div className="truncate h-full flex items-center" title={value}>
+              {value}
+            </div>
+          )
+        },
+        size: 180,
       }),
       columnHelper.accessor(
         row => row.concepts?.join('、') ?? row.concept ?? '',
@@ -385,23 +378,20 @@ export const RPSTable: React.FC<RPSTableProps> = ({
           </div>
         </CardContent>
       </Card>
-      <Sheet
+      <Dialog
         open={!!conceptDetail}
         onOpenChange={open => {
           if (!open) setConceptDetail(null)
         }}
       >
-        <SheetContent
-          side="right"
-          className="sm:max-w-md w-full bg-white data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right"
-        >
-          <SheetHeader>
-            <SheetTitle>
+        <DialogContent className="sm:max-w-md bg-white">
+          <DialogHeader>
+            <DialogTitle>
               {conceptDetail?.name}（{conceptDetail?.code}）
-            </SheetTitle>
-            <SheetDescription>查看该股票的完整概念列表</SheetDescription>
-          </SheetHeader>
-          <div className="p-4 space-y-3">
+            </DialogTitle>
+            <DialogDescription>查看该股票的完整概念列表</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 max-h-[60vh] overflow-auto pr-1">
             {conceptDetail?.concepts?.length ? (
               <div className="flex flex-wrap gap-2">
                 {conceptDetail.concepts.map(concept => (
@@ -414,8 +404,8 @@ export const RPSTable: React.FC<RPSTableProps> = ({
               <p className="text-muted-foreground text-sm">暂无概念信息</p>
             )}
           </div>
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
