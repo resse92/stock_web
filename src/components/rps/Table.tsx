@@ -389,7 +389,7 @@ export const RPSTable: React.FC<RPSTableProps> = ({
             <DialogTitle>
               {conceptDetail?.name}（{conceptDetail?.code}）
             </DialogTitle>
-            <DialogDescription>查看该股票的完整概念列表</DialogDescription>
+            <DialogDescription>概念</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 max-h-[60vh] overflow-auto pr-1">
             {conceptDetail?.concepts?.length ? (

@@ -1,5 +1,4 @@
-import * as React from 'react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -10,6 +9,14 @@ import {
 } from '@/components/ui/popover'
 import Button from '@/components/ui/button'
 import TradeDateCalendar from '@/components/ui/trade-date-calendar'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
+import { SlidersHorizontal } from 'lucide-react'
 
 interface RPSFiltersProps {
   onFiltersChange?: (filters: RPSFilterValues) => void
@@ -35,18 +42,45 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
     listingDays: 360,
     date: '',
   })
-  const initialFetchTriggered = React.useRef(false)
+  const [filtersBeforeOpen, setFiltersBeforeOpen] =
+    useState<RPSFilterValues>(filters)
+  const [open, setOpen] = useState(false)
+  const [lastSubmittedFilters, setLastSubmittedFilters] =
+    useState<RPSFilterValues | null>(null)
 
-  React.useEffect(() => {
-    if (!initialFetchTriggered.current && filters.date) {
-      onFiltersChange?.(filters)
-      initialFetchTriggered.current = true
-    }
-  }, [filters, onFiltersChange])
+  const isSameFilters = (
+    a: RPSFilterValues | null,
+    b: RPSFilterValues | null
+  ) => {
+    if (!a || !b) return false
+    const compareRange = (
+      r1: { enabled: boolean; min: number; max: number },
+      r2: { enabled: boolean; min: number; max: number }
+    ) => r1.enabled === r2.enabled && r1.min === r2.min && r1.max === r2.max
+
+    return (
+      compareRange(a.rps3, b.rps3) &&
+      compareRange(a.rps5, b.rps5) &&
+      compareRange(a.rps15, b.rps15) &&
+      compareRange(a.rps30, b.rps30) &&
+      a.marketCap === b.marketCap &&
+      a.listingDays === b.listingDays &&
+      a.date === b.date
+    )
+  }
 
   const handleFilterChange = (key: keyof RPSFilterValues, value: unknown) => {
     const newFilters = { ...filters, [key]: value }
     setFilters(newFilters)
+  }
+
+  const handleDateChange = async (date: string) => {
+    const newFilters = { ...filters, date }
+    setFilters(newFilters)
+    if (onFiltersChange) {
+      await onFiltersChange(newFilters)
+      setLastSubmittedFilters(newFilters)
+    }
   }
 
   const handleRPSEnable = (
@@ -206,70 +240,146 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
     )
   }
 
-  const handleConfirm = () => {
-    onFiltersChange?.(filters)
+  const handleConfirm = async () => {
+    setOpen(false)
+    if (isSameFilters(filters, lastSubmittedFilters)) {
+      return
+    }
+    if (onFiltersChange) {
+      await onFiltersChange(filters)
+      setLastSubmittedFilters(filters)
+    }
   }
 
-  // 移除自动触发，改为手动触发
-  // 用户需要点击"确认"按钮才会触发请求
+  const handleCancel = () => {
+    setFilters(filtersBeforeOpen)
+    setOpen(false)
+  }
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      setFiltersBeforeOpen(filters)
+    }
+    setOpen(nextOpen)
+  }
 
   return (
-    <div className="flex flex-col flex-wrap items-stretch gap-4">
-      {/* RPS 筛选器 */}
-      <div className="flex items-center gap-4">
-        <RPSRangeInput rpsType="rps3" label="RPS3" value={filters.rps3} />
-        <RPSRangeInput rpsType="rps5" label="RPS5" value={filters.rps5} />
-        <RPSRangeInput rpsType="rps15" label="RPS15" value={filters.rps15} />
-        <RPSRangeInput rpsType="rps30" label="RPS30" value={filters.rps30} />
+    <div className="flex items-center gap-3">
+      <div className="flex items-center space-x-2">
+        <Label className="text-sm font-medium">日期</Label>
+        <TradeDateCalendar
+          date={filters.date}
+          onDateChange={handleDateChange}
+        />
       </div>
 
-      {/* 其他筛选器 */}
-      <div className="flex items-center gap-4">
-        <div className="flex items-center space-x-2">
-          <Label className="text-sm font-medium">日期</Label>
-          <TradeDateCalendar
-            date={filters.date}
-            onDateChange={date => handleFilterChange('date', date)}
-          />
-        </div>
+      <Sheet open={open} onOpenChange={handleOpenChange}>
+        <SheetTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <SlidersHorizontal className="size-4" />
+            筛选
+          </Button>
+        </SheetTrigger>
 
-        <div className="flex items-center space-x-2">
-          <Label className="text-sm font-medium">流通市值(亿)</Label>
-          <Input
-            type="number"
-            placeholder="0"
-            value={filters.marketCap || ''}
-            onChange={e =>
-              handleFilterChange('marketCap', parseFloat(e.target.value) || 0)
-            }
-            className="w-16 h-7 text-sm"
-          />
-        </div>
+        <SheetContent side="right" className="sm:max-w-xl bg-white">
+          <SheetHeader>
+            <SheetTitle>RPS 筛选条件</SheetTitle>
+          </SheetHeader>
 
-        <div className="flex items-center space-x-2">
-          <Label className="text-sm font-medium">上市天数</Label>
-          <Input
-            type="number"
-            placeholder="360"
-            value={filters.listingDays || ''}
-            onChange={e =>
-              handleFilterChange('listingDays', parseInt(e.target.value) || 360)
-            }
-            className="w-16 h-7 text-sm"
-          />
-        </div>
-        {/*grow=1 表示剩余空间全部占用, 确认显示在右侧*/}
-        <div className="flex-1"></div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleConfirm}
-          disabled={!filters.date}
-          className="active:bg-black active:text-white"
-        >
-          确认
-        </Button>
-      </div>
+          <div className="flex flex-col gap-6 overflow-y-auto p-4 pt-0">
+            <div className="space-y-3">
+              <div className="text-sm font-semibold text-foreground">
+                RPS 区间
+              </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <RPSRangeInput
+                  rpsType="rps3"
+                  label="RPS3"
+                  value={filters.rps3}
+                />
+                <RPSRangeInput
+                  rpsType="rps5"
+                  label="RPS5"
+                  value={filters.rps5}
+                />
+                <RPSRangeInput
+                  rpsType="rps15"
+                  label="RPS15"
+                  value={filters.rps15}
+                />
+                <RPSRangeInput
+                  rpsType="rps30"
+                  label="RPS30"
+                  value={filters.rps30}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="text-sm font-semibold text-foreground">
+                其他筛选
+              </div>
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center space-x-2">
+                  <Label className="text-sm font-medium">流通市值(亿)</Label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={filters.marketCap || ''}
+                    onChange={e =>
+                      handleFilterChange(
+                        'marketCap',
+                        parseFloat(e.target.value) || 0
+                      )
+                    }
+                    className="w-20 h-9 text-sm"
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Label className="text-sm font-medium">上市天数</Label>
+                  <Input
+                    type="number"
+                    placeholder="360"
+                    value={filters.listingDays || ''}
+                    onChange={e =>
+                      handleFilterChange(
+                        'listingDays',
+                        parseInt(e.target.value) || 360
+                      )
+                    }
+                    className="w-20 h-9 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCancel}
+                className="w-full sm:w-auto"
+              >
+                取消
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handleConfirm}
+                disabled={!filters.date}
+                className="w-full sm:w-auto"
+              >
+                确认
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }
