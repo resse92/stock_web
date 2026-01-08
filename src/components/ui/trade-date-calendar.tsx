@@ -26,6 +26,22 @@ export interface TradeDateCalendarProps {
   className?: string
 }
 
+const BEIJING_UTC_OFFSET_HOURS = 8
+const BEIJING_CUTOFF_MINUTES = 15 * 60
+
+const isBeforeBeijingCutoff = () => {
+  const now = new Date()
+  const beijingHour = (now.getUTCHours() + BEIJING_UTC_OFFSET_HOURS) % 24
+  const totalMinutes = beijingHour * 60 + now.getUTCMinutes()
+  return totalMinutes < BEIJING_CUTOFF_MINUTES
+}
+
+const pickDefaultTradeDate = (dates: string[]) => {
+  if (dates.length === 0) return undefined
+  const shouldUsePrevious = isBeforeBeijingCutoff() && dates.length > 1
+  return dates[shouldUsePrevious ? 1 : 0]
+}
+
 const mergeTradeDates = (current: string[], incoming: string[]) => {
   const merged = Array.from(new Set([...current, ...incoming]))
   return merged.sort((a, b) => (a < b ? 1 : -1))
@@ -123,7 +139,10 @@ export const TradeDateCalendar = ({
         if (canceled) return
         applyTradeDatesUpdate(dates, hasMore)
         if (!date && dates.length > 0) {
-          onDateChange?.(dates[0])
+          const defaultDate = pickDefaultTradeDate(dates)
+          if (defaultDate) {
+            onDateChange?.(defaultDate)
+          }
         }
       })
       .catch(err => {
