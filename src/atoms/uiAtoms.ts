@@ -66,7 +66,12 @@ export const setLoadingAtom = atom(
 
 export const openModalAtom = atom(
   null,
-  (get, set, modal: keyof UIState['modals'], data?: any) => {
+  (
+    get,
+    set,
+    modal: keyof UIState['modals'],
+    data?: Record<string, unknown>
+  ) => {
     set(modalsAtom, {
       ...get(modalsAtom),
       [modal]: {

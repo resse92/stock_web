@@ -109,7 +109,10 @@ export interface UIActions {
   setSidebarCollapsed: (collapsed: boolean) => void
   setTheme: (theme: UIState['theme']) => void
   setLoading: (section: keyof UIState['isLoading'], loading: boolean) => void
-  openModal: (modal: keyof UIState['modals'], data?: any) => void
+  openModal: (
+    modal: keyof UIState['modals'],
+    data?: Record<string, unknown>
+  ) => void
   closeModal: (modal: keyof UIState['modals']) => void
 }
 

@@ -1,22 +1,20 @@
-
-import { Users, Clipboard, Wallet, FileText } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Users, Clipboard, Wallet, FileText } from 'lucide-react'
 
 const iconMap = {
   users: Users,
   clipboard: Clipboard,
   wallet: Wallet,
   invoice: FileText,
-};
+}
 
 interface StatCardProps {
-  title: string;
-  value: string;
-  icon: keyof typeof iconMap;
+  title: string
+  value: string
+  icon: keyof typeof iconMap
 }
 
 export function StatCard({ title, value, icon }: StatCardProps) {
-  const Icon = iconMap[icon];
+  const Icon = iconMap[icon]
 
   return (
     <div className="relative overflow-hidden rounded-xl border border-border bg-card p-4">
@@ -30,6 +28,5 @@ export function StatCard({ title, value, icon }: StatCardProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
-

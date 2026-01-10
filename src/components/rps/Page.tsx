@@ -163,9 +163,9 @@ export const RPSPage: React.FC = () => {
           <RPSFilters onFiltersChange={handleFiltersChange} />
         </div>
 
-        <div className="w-full flex-1 min-h-0">
-          <RPSTable data={rpsData} loading={loading} error={error} />
-        </div>
+        {/*<div className="w-full flex-1 min-h-0">*/}
+        <RPSTable data={rpsData} loading={loading} error={error} />
+        {/*</div>*/}
       </main>
     </div>
   )
