@@ -91,6 +91,11 @@ export const TradeDateCalendar = ({
     if (tradeDates.length > 0) return parseISO(tradeDates[0])
     return undefined
   }, [selectedDate, tradeDates])
+  const triggerLabel = React.useMemo(() => {
+    if (loading || loadingMore) return '加载中...'
+    if (error && tradeDates.length === 0) return '加载失败，点此重试'
+    return date || '选择交易日'
+  }, [date, error, loading, loadingMore, tradeDates.length])
 
   const loadTradeDates = React.useCallback(
     async (beforeDate?: string) => {
@@ -114,6 +119,13 @@ export const TradeDateCalendar = ({
 
         applyTradeDatesUpdate(dates, !noMore)
 
+        if (!isLoadMore && !date && dates.length > 0) {
+          const defaultDate = pickDefaultTradeDate(dates)
+          if (defaultDate) {
+            onDateChange?.(defaultDate)
+          }
+        }
+
         return dates
       } catch (err) {
         const message =
@@ -130,6 +142,12 @@ export const TradeDateCalendar = ({
     },
     [applyTradeDatesUpdate, defaultBeforeDate]
   )
+
+  const handleTriggerClick = React.useCallback(() => {
+    if (tradeDatesRef.current.length === 0 && !loading && !loadingMore) {
+      void loadTradeDates()
+    }
+  }, [loadTradeDates, loading, loadingMore])
 
   React.useEffect(() => {
     let canceled = false
@@ -156,6 +174,14 @@ export const TradeDateCalendar = ({
       canceled = true
     }
   }, [applyTradeDatesUpdate, date, defaultBeforeDate, onDateChange])
+
+  React.useEffect(() => {
+    if (!open) return
+    if (tradeDatesRef.current.length > 0) return
+    if (loading || loadingMore) return
+
+    void loadTradeDates()
+  }, [loadTradeDates, loading, loadingMore, open])
 
   const handleDayClick: DayEventHandler<React.MouseEvent> = (
     day
@@ -229,9 +255,10 @@ export const TradeDateCalendar = ({
             !date && 'text-muted-foreground',
             className
           )}
+          onClick={handleTriggerClick}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? date : '选择交易日'}
+          {triggerLabel}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[320px] p-3">
@@ -263,10 +290,18 @@ export const TradeDateCalendar = ({
               variant="outline"
               size="sm"
               onClick={handleLoadMore}
-              disabled={loadingMore || !hasMore || tradeDates.length === 0}
+              disabled={
+                loading || loadingMore || (!hasMore && tradeDates.length > 0)
+              }
             >
-              {loadingMore && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {hasMore ? '加载更早日期' : '无更多日期'}
+              {(loading || loadingMore) && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {tradeDates.length === 0
+                ? '加载交易日'
+                : hasMore
+                  ? '加载更早日期'
+                  : '无更多日期'}
             </Button>
           </div>
           {error && (
