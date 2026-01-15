@@ -54,7 +54,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         setListTableComponent(() => module.ListTable)
       })
       .catch(err => {
-        console.error('加载 react-vtable 失败', err)
+        console.error('Failed to load react-vtable:', err)
       })
   }, [])
 

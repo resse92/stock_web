@@ -139,7 +139,10 @@ const CapitalFlowFilters: React.FC<CapitalFlowFiltersProps> = ({
                   min="1"
                   value={filters.days}
                   onChange={e =>
-                    handleFilterChange('days', parseInt(e.target.value) || 1)
+                    handleFilterChange(
+                      'days',
+                      Math.max(1, parseInt(e.target.value) || 1)
+                    )
                   }
                   className="w-20"
                 />
