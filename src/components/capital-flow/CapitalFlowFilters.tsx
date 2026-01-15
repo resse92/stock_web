@@ -1,11 +1,6 @@
 import React, { useState } from 'react'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 import Button from '@/components/ui/button'
 import TradeDateCalendar from '@/components/ui/trade-date-calendar'
 import {
@@ -59,7 +54,7 @@ const CapitalFlowFilters: React.FC<CapitalFlowFiltersProps> = ({
     const newFilters = { ...filters, date }
     setFilters(newFilters)
     if (onFiltersChange) {
-      onFiltersChange(newFilters)
+      await onFiltersChange(newFilters)
       setLastSubmittedFilters(newFilters)
     }
   }
@@ -93,17 +88,14 @@ const CapitalFlowFilters: React.FC<CapitalFlowFiltersProps> = ({
   const dayOptions = [1, 3, 5]
 
   return (
-    <div className="flex gap-2 items-center">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline">
-            {filters.date || '选择日期'}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <TradeDateCalendar onSelect={handleDateChange} />
-        </PopoverContent>
-      </Popover>
+    <div className="flex gap-3 items-center">
+      <div className="flex items-center space-x-2">
+        <Label className="text-sm font-medium">日期</Label>
+        <TradeDateCalendar
+          date={filters.date}
+          onDateChange={handleDateChange}
+        />
+      </div>
 
       <Sheet open={open} onOpenChange={handleOpenChange}>
         <SheetTrigger asChild>
