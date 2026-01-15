@@ -7,6 +7,7 @@ import {
   ChevronRight,
   Layers,
   ExternalLink,
+  TrendingUp,
 } from 'lucide-react'
 
 import Button from '@/components/ui/button'
@@ -30,6 +31,7 @@ const navItems = [
   { path: '/', label: 'Dashboard', icon: Home },
   { path: '/rps', label: 'RPS', icon: Crown },
   { path: '/concepts', label: '概念选股', icon: Layers },
+  { path: '/capital-flow', label: '资金流向', icon: TrendingUp },
   { path: '/external-nav', label: '第三方导航', icon: ExternalLink },
   { path: '/web-research', label: '网页调研', icon: Globe2 },
 ]
