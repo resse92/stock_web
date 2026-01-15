@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
@@ -132,7 +133,7 @@ const CapitalFlowFilters: React.FC<CapitalFlowFiltersProps> = ({
               </div>
               <div className="flex items-center gap-2 mt-2">
                 <Label htmlFor="custom-days">自定义天数</Label>
-                <input
+                <Input
                   id="custom-days"
                   type="number"
                   min="1"
@@ -140,7 +141,7 @@ const CapitalFlowFilters: React.FC<CapitalFlowFiltersProps> = ({
                   onChange={e =>
                     handleFilterChange('days', parseInt(e.target.value) || 1)
                   }
-                  className="w-20 px-2 py-1 border rounded text-sm"
+                  className="w-20"
                 />
               </div>
             </div>

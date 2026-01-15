@@ -22,6 +22,10 @@ interface CapitalFlowTableProps {
   error?: string | null
 }
 
+const formatNumber = (value: number | undefined, decimals = 2): string => {
+  return typeof value === 'number' ? value.toFixed(decimals) : ''
+}
+
 export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
   data: propData,
   loading = false,
@@ -84,9 +88,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         showSort: true,
         sort: true,
         fieldFormat: (record: CapitalFlowData) =>
-          typeof record?.change_pct === 'number'
-            ? record.change_pct.toFixed(2)
-            : '',
+          formatNumber(record?.change_pct),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -98,9 +100,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         showSort: true,
         sort: true,
         fieldFormat: (record: CapitalFlowData) =>
-          typeof record?.net_amount_main === 'number'
-            ? record.net_amount_main.toFixed(2)
-            : '',
+          formatNumber(record?.net_amount_main),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -112,9 +112,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         showSort: true,
         sort: true,
         fieldFormat: (record: CapitalFlowData) =>
-          typeof record?.net_pct_main === 'number'
-            ? record.net_pct_main.toFixed(2)
-            : '',
+          formatNumber(record?.net_pct_main),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -126,9 +124,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         showSort: true,
         sort: true,
         fieldFormat: (record: CapitalFlowData) =>
-          typeof record?.net_amount_xl === 'number'
-            ? record.net_amount_xl.toFixed(2)
-            : '',
+          formatNumber(record?.net_amount_xl),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -140,9 +136,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         showSort: true,
         sort: true,
         fieldFormat: (record: CapitalFlowData) =>
-          typeof record?.net_pct_xl === 'number'
-            ? record.net_pct_xl.toFixed(2)
-            : '',
+          formatNumber(record?.net_pct_xl),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -154,9 +148,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         showSort: true,
         sort: true,
         fieldFormat: (record: CapitalFlowData) =>
-          typeof record?.net_amount_l === 'number'
-            ? record.net_amount_l.toFixed(2)
-            : '',
+          formatNumber(record?.net_amount_l),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -167,10 +159,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 140,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          typeof record?.net_pct_l === 'number'
-            ? record.net_pct_l.toFixed(2)
-            : '',
+        fieldFormat: (record: CapitalFlowData) => formatNumber(record?.net_pct_l),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -182,9 +171,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         showSort: true,
         sort: true,
         fieldFormat: (record: CapitalFlowData) =>
-          typeof record?.net_amount_m === 'number'
-            ? record.net_amount_m.toFixed(2)
-            : '',
+          formatNumber(record?.net_amount_m),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -195,10 +182,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 140,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          typeof record?.net_pct_m === 'number'
-            ? record.net_pct_m.toFixed(2)
-            : '',
+        fieldFormat: (record: CapitalFlowData) => formatNumber(record?.net_pct_m),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -210,9 +194,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         showSort: true,
         sort: true,
         fieldFormat: (record: CapitalFlowData) =>
-          typeof record?.net_amount_s === 'number'
-            ? record.net_amount_s.toFixed(2)
-            : '',
+          formatNumber(record?.net_amount_s),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -223,10 +205,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 140,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          typeof record?.net_pct_s === 'number'
-            ? record.net_pct_s.toFixed(2)
-            : '',
+        fieldFormat: (record: CapitalFlowData) => formatNumber(record?.net_pct_s),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
