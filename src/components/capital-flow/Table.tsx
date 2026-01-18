@@ -71,10 +71,12 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
   ])
   const [ListTableComponent, setListTableComponent] =
     React.useState<ListTableComponentType>(null)
-  type ExtendedRow = CapitalFlowData & {
-    __loadMoreRow?: boolean
-    __loadStatus?: 'more' | 'done' | 'loading'
+  type LoadMoreRow = CapitalFlowData & {
+    __kind: 'loadMore'
+    __loadStatus: 'more' | 'done' | 'loading'
   }
+  type DataRow = CapitalFlowData & { __kind?: undefined }
+  type ExtendedRow = DataRow | LoadMoreRow
 
   React.useEffect(() => {
     // react-vtable依赖React 18内部字段，React 19需要做兼容填充
@@ -99,8 +101,8 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
       })
   }, [])
 
-  const isLoadMoreRow = (record?: ExtendedRow | null): record is ExtendedRow =>
-    !!record?.__loadMoreRow
+  const isLoadMoreRow = (record?: ExtendedRow | null): record is LoadMoreRow =>
+    (record as LoadMoreRow | null)?.__kind === 'loadMore'
 
   const tableData = useMemo(() => {
     if (propData && propData.length > 0) {
@@ -110,12 +112,12 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
   }, [propData])
 
   const displayData = useMemo<ExtendedRow[]>(() => {
-    const loadStatus: ExtendedRow['__loadStatus'] = loadingMore
+    const loadStatus: LoadMoreRow['__loadStatus'] = loadingMore
       ? 'loading'
       : hasMore
         ? 'more'
         : 'done'
-    const rows = [...tableData]
+    const rows: ExtendedRow[] = [...tableData] as ExtendedRow[]
     const shouldShowLoadRow =
       (!loading && tableData.length > 0) || hasMore || loadingMore
     if (shouldShowLoadRow) {
@@ -134,7 +136,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         net_pct_m: Number.NaN,
         net_amount_s: Number.NaN,
         net_pct_s: Number.NaN,
-        __loadMoreRow: true,
+        __kind: 'loadMore',
         __loadStatus: loadStatus,
       })
     }
@@ -149,14 +151,14 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 200,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
+        fieldFormat: (record: ExtendedRow) =>
           isLoadMoreRow(record)
             ? record.__loadStatus === 'loading'
               ? '加载中...'
               : record.__loadStatus === 'more'
                 ? '点击加载更多'
                 : '已加载全部'
-            : `${record?.name ?? ''}(${record?.sec_code ?? ''})`,
+            : `${record.name ?? ''}(${record.sec_code ?? ''})`,
       },
       {
         field: 'change_pct',
@@ -164,8 +166,8 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 120,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          isLoadMoreRow(record) || record?.change_pct === undefined
+        fieldFormat: (record: ExtendedRow) =>
+          isLoadMoreRow(record) || record.change_pct === undefined
             ? ''
             : `${formatNumber(record.change_pct)}%`,
         style: {
@@ -178,8 +180,8 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 140,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          isLoadMoreRow(record) ? '' : formatNumber(record?.net_amount_main),
+        fieldFormat: (record: ExtendedRow) =>
+          isLoadMoreRow(record) ? '' : formatNumber(record.net_amount_main),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -190,8 +192,8 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 140,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          isLoadMoreRow(record) || record?.net_pct_main === undefined
+        fieldFormat: (record: ExtendedRow) =>
+          isLoadMoreRow(record) || record.net_pct_main === undefined
             ? ''
             : `${formatNumber(record.net_pct_main)}%`,
         style: {
@@ -204,8 +206,8 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 150,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          isLoadMoreRow(record) ? '' : formatNumber(record?.net_amount_xl),
+        fieldFormat: (record: ExtendedRow) =>
+          isLoadMoreRow(record) ? '' : formatNumber(record.net_amount_xl),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -216,8 +218,8 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 160,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          isLoadMoreRow(record) || record?.net_pct_xl === undefined
+        fieldFormat: (record: ExtendedRow) =>
+          isLoadMoreRow(record) || record.net_pct_xl === undefined
             ? ''
             : `${formatNumber(record.net_pct_xl)}%`,
         style: {
@@ -230,8 +232,8 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 140,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          isLoadMoreRow(record) ? '' : formatNumber(record?.net_amount_l),
+        fieldFormat: (record: ExtendedRow) =>
+          isLoadMoreRow(record) ? '' : formatNumber(record.net_amount_l),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -242,8 +244,8 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 140,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          isLoadMoreRow(record) || record?.net_pct_l === undefined
+        fieldFormat: (record: ExtendedRow) =>
+          isLoadMoreRow(record) || record.net_pct_l === undefined
             ? ''
             : `${formatNumber(record.net_pct_l)}%`,
         style: {
@@ -256,8 +258,8 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 140,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          isLoadMoreRow(record) ? '' : formatNumber(record?.net_amount_m),
+        fieldFormat: (record: ExtendedRow) =>
+          isLoadMoreRow(record) ? '' : formatNumber(record.net_amount_m),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -268,8 +270,8 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 140,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          isLoadMoreRow(record) || record?.net_pct_m === undefined
+        fieldFormat: (record: ExtendedRow) =>
+          isLoadMoreRow(record) || record.net_pct_m === undefined
             ? ''
             : `${formatNumber(record.net_pct_m)}%`,
         style: {
@@ -282,8 +284,8 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 140,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          isLoadMoreRow(record) ? '' : formatNumber(record?.net_amount_s),
+        fieldFormat: (record: ExtendedRow) =>
+          isLoadMoreRow(record) ? '' : formatNumber(record.net_amount_s),
         style: {
           fontFamily: 'Menlo, Monaco, Consolas, monospace',
         },
@@ -294,8 +296,8 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
         width: 140,
         showSort: true,
         sort: true,
-        fieldFormat: (record: CapitalFlowData) =>
-          isLoadMoreRow(record) || record?.net_pct_s === undefined
+        fieldFormat: (record: ExtendedRow) =>
+          isLoadMoreRow(record) || record.net_pct_s === undefined
             ? ''
             : `${formatNumber(record.net_pct_s)}%`,
         style: {
