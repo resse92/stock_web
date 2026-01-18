@@ -44,6 +44,7 @@ export interface StockData {
 export interface CapitalFlowData {
   date: string
   sec_code: string
+  name?: string
   change_pct: number
   net_amount_main: number
   net_pct_main: number

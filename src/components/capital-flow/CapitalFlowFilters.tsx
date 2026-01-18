@@ -3,14 +3,6 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import Button from '@/components/ui/button'
 import TradeDateCalendar from '@/components/ui/trade-date-calendar'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet'
-import { SlidersHorizontal } from 'lucide-react'
 
 interface CapitalFlowFiltersProps {
   onFiltersChange?: (filters: CapitalFlowFilterValues) => void
@@ -28,9 +20,6 @@ const CapitalFlowFilters: React.FC<CapitalFlowFiltersProps> = ({
     date: '',
     days: 1,
   })
-  const [filtersBeforeOpen, setFiltersBeforeOpen] =
-    useState<CapitalFlowFilterValues>(filters)
-  const [open, setOpen] = useState(false)
   const [lastSubmittedFilters, setLastSubmittedFilters] =
     useState<CapitalFlowFilterValues | null>(null)
 
@@ -64,28 +53,21 @@ const CapitalFlowFilters: React.FC<CapitalFlowFiltersProps> = ({
       onFiltersChange(filters)
       setLastSubmittedFilters(filters)
     }
-    setOpen(false)
-  }
-
-  const handleOpenChange = (isOpen: boolean) => {
-    if (isOpen) {
-      setFiltersBeforeOpen(filters)
-    } else {
-      if (!isSameFilters(filters, filtersBeforeOpen)) {
-        setFilters(filtersBeforeOpen)
-      }
-    }
-    setOpen(isOpen)
   }
 
   const handleDaysClick = (days: number) => {
     const newFilters = { ...filters, days }
     setFilters(newFilters)
+    // 如果已选择日期，直接触发查询以提升多日筛选效率
+    if (onFiltersChange && filters.date) {
+      onFiltersChange(newFilters)
+      setLastSubmittedFilters(newFilters)
+    }
   }
 
   const hasChanges = !isSameFilters(filters, lastSubmittedFilters)
 
-  const dayOptions = [1, 3, 5]
+  const dayOptions = [1, 3, 5, 10]
 
   return (
     <div className="flex gap-3 items-center">
@@ -97,62 +79,50 @@ const CapitalFlowFilters: React.FC<CapitalFlowFiltersProps> = ({
         />
       </div>
 
-      <Sheet open={open} onOpenChange={handleOpenChange}>
-        <SheetTrigger asChild>
-          <Button variant="outline" size="sm">
-            <SlidersHorizontal className="h-4 w-4" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>资金流向筛选</SheetTitle>
-          </SheetHeader>
-
-          <div className="space-y-6 py-4">
-            <div className="space-y-2">
-              <Label>天数</Label>
-              <div className="flex gap-2">
-                {dayOptions.map(day => (
-                  <Button
-                    key={day}
-                    variant={filters.days === day ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => handleDaysClick(day)}
-                  >
-                    {day}天
-                  </Button>
-                ))}
-              </div>
-              <div className="flex items-center gap-2 mt-2">
-                <Label htmlFor="custom-days">自定义天数</Label>
-                <Input
-                  id="custom-days"
-                  type="number"
-                  min="1"
-                  value={filters.days}
-                  onChange={e =>
-                    handleFilterChange(
-                      'days',
-                      Math.max(1, parseInt(e.target.value) || 1)
-                    )
-                  }
-                  className="w-20"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-2 pt-4">
+      <div className="flex items-center space-x-3">
+        <Label className="text-sm font-medium">天数</Label>
+        <div className="flex items-center gap-2">
+          {dayOptions.map(day => (
             <Button
-              className="flex-1"
-              onClick={handleQueryClick}
-              disabled={!filters.date || !hasChanges}
+              key={day}
+              variant={filters.days === day ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => handleDaysClick(day)}
             >
-              查询
+              {day}天
             </Button>
+          ))}
+          <div className="flex items-center gap-2">
+            <Label
+              htmlFor="custom-days"
+              className="text-sm text-muted-foreground"
+            >
+              自定义
+            </Label>
+            <Input
+              id="custom-days"
+              type="number"
+              min="1"
+              value={filters.days}
+              onChange={e =>
+                handleFilterChange(
+                  'days',
+                  Math.max(1, parseInt(e.target.value) || 1)
+                )
+              }
+              className="w-20"
+            />
           </div>
-        </SheetContent>
-      </Sheet>
+        </div>
+      </div>
+
+      <Button
+        size="sm"
+        onClick={handleQueryClick}
+        disabled={!filters.date || !hasChanges}
+      >
+        查询
+      </Button>
     </div>
   )
 }
