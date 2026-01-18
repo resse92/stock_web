@@ -8,6 +8,7 @@ import { ConceptsPage } from '@/components/concepts/ConceptsPage'
 import { NotFound } from '@/components/NotFound'
 import { WebResearchPage } from '@/components/deepseek/WebResearchPage'
 import { ExternalNavPage } from '@/components/external-nav/ExternalNavPage'
+import { CapitalFlowPage } from '@/components/capital-flow/Page'
 import {
   SidebarProvider as UISidebarProvider,
   SidebarInset,
@@ -40,6 +41,7 @@ const AppLayout = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/rps" element={<RPSPage />} />
           <Route path="/concepts" element={<ConceptsPage />} />
+          <Route path="/capital-flow" element={<CapitalFlowPage />} />
           <Route path="/external-nav" element={<ExternalNavPage />} />
           <Route path="/web-research" element={<WebResearchPage />} />
           <Route path="*" element={<NotFound />} />
