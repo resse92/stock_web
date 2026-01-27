@@ -37,7 +37,11 @@ export const CapitalFlowPage: React.FC = () => {
       }
 
       try {
-        append ? setLoadingMore(true) : setLoading(true)
+        if (append) {
+          setLoadingMore(true)
+        } else {
+          setLoading(true)
+        }
         setError(null)
 
         const supabase = getSupabaseClient()
@@ -124,7 +128,11 @@ export const CapitalFlowPage: React.FC = () => {
           description: errorMessage,
         })
       } finally {
-        append ? setLoadingMore(false) : setLoading(false)
+        if (append) {
+          setLoadingMore(false)
+        } else {
+          setLoading(false)
+        }
       }
     },
     [PAGE_SIZE, capitalFlowData, toast]
