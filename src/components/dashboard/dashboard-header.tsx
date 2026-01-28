@@ -5,7 +5,7 @@ export function DashboardHeader() {
   return (
     <div className="w-full sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background px-3 py-2.5 sm:px-4 sm:py-3 md:px-7">
       <div className="flex items-center gap-2 min-w-0 flex-1">
-        <h1 className="text-base sm:text-xl md:text-2xl font-medium text-foreground truncate">
+        <h1 className="text-base sm:text-xl md:text-2xl font-semibold tracking-tight text-foreground truncate">
           Welcome back 👋
         </h1>
       </div>

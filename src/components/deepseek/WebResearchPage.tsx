@@ -405,10 +405,10 @@ export const WebResearchPage = () => {
   const handleClearLogs = () => resetLogs()
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-8 space-y-6">
+    <div className="min-h-svh bg-background">
+      <main className="container mx-auto flex min-h-svh flex-col gap-6 px-4 py-4">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+          <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
             <Sparkles className="h-7 w-7 text-primary" />
             Deepseek 网页调研
           </h1>
@@ -624,7 +624,7 @@ export const WebResearchPage = () => {
                           <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
                             {log.timestamp}
                           </p>
-                          <pre className="whitespace-pre-wrap wrap-break-word text-xs font-mono text-foreground">
+                          <pre className="whitespace-pre-wrap break-words text-xs font-mono text-foreground">
                             {log.content}
                           </pre>
                         </li>

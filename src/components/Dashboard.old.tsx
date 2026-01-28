@@ -31,12 +31,14 @@ export const Dashboard = () => {
   const averageChange = totalChange / displayStocks.length
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-svh bg-background">
       <main className="container mx-auto px-4 py-8">
         {/* Dashboard Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              Dashboard
+            </h2>
             <p className="text-muted-foreground">
               Example dashboard with static demo data (no API requests)
             </p>
@@ -81,7 +83,7 @@ export const Dashboard = () => {
             <CardContent>
               <div
                 className={`text-2xl font-bold ${
-                  averageChange >= 0 ? 'text-green-600' : 'text-red-600'
+                  averageChange >= 0 ? 'text-primary' : 'text-destructive'
                 }`}
               >
                 {averageChange >= 0 ? '+' : ''}

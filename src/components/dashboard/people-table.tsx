@@ -59,9 +59,9 @@ const statusIcons = {
 }
 
 const statusColors = {
-  active: 'text-green-600',
+  active: 'text-primary',
   offline: 'text-muted-foreground',
-  away: 'text-yellow-600',
+  away: 'text-secondary-foreground',
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -349,7 +349,7 @@ export function PeopleTable() {
                 onCheckedChange={() => toggleStatusFilter('active')}
               >
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="size-3.5 text-green-600" />
+                  <CheckCircle2 className="size-3.5 text-primary" />
                   Active
                 </div>
               </DropdownMenuCheckboxItem>
@@ -367,7 +367,7 @@ export function PeopleTable() {
                 onCheckedChange={() => toggleStatusFilter('away')}
               >
                 <div className="flex items-center gap-2">
-                  <CalendarIcon className="size-3.5 text-yellow-600" />
+                  <CalendarIcon className="size-3.5 text-secondary-foreground" />
                   Away
                 </div>
               </DropdownMenuCheckboxItem>

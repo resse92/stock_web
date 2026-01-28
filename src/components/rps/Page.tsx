@@ -155,17 +155,19 @@ export const RPSPage: React.FC = () => {
   )
 
   return (
-    <div className="h-screen overflow-hidden bg-background">
-      <main className="container mx-auto px-4 py-4 h-full flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between mb-4 shrink-0">
-          <h2 className="text-3xl font-bold tracking-tight">RPS</h2>
+    <div className="min-h-svh bg-background">
+      <main className="container mx-auto flex min-h-svh h-svh flex-col gap-4 px-4 py-4 overflow-hidden">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            RPS
+          </h2>
 
           <RPSFilters onFiltersChange={handleFiltersChange} />
         </div>
 
-        {/*<div className="w-full flex-1 min-h-0">*/}
-        <RPSTable data={rpsData} loading={loading} error={error} />
-        {/*</div>*/}
+        <div className="flex-1 min-h-0">
+          <RPSTable data={rpsData} loading={loading} error={error} />
+        </div>
       </main>
     </div>
   )

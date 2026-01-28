@@ -34,7 +34,7 @@ const AppLayout = () => {
         }
         className={cn(
           'min-h-svh bg-background transition-[margin] duration-300 ease-in-out',
-          'md:ml-(--inset-offset)'
+          'md:ml-[var(--inset-offset)]'
         )}
       >
         <Routes>

@@ -3,7 +3,7 @@ import { DashboardContent } from '@/components/dashboard/dashboard-content'
 
 export function Dashboard() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-svh bg-background">
       <DashboardHeader />
       <DashboardContent />
     </div>

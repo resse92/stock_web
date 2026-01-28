@@ -21,7 +21,7 @@ export function DatePicker({
 
   return (
     <div className={cn('relative', className)}>
-      <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+      <CalendarIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <input
         type="date"
         value={date || ''}

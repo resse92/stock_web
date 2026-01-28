@@ -5,13 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export const NotFound = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-8">
+    <div className="min-h-svh bg-background">
+      <main className="container mx-auto flex min-h-svh flex-col px-4 py-4">
         {/* 404 Header */}
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
           <div className="mb-8">
             <h1 className="text-9xl font-bold text-muted-foreground/20">404</h1>
-            <h2 className="text-3xl font-bold tracking-tight mb-4">
+            <h2 className="mb-4 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               页面未找到
             </h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-md">

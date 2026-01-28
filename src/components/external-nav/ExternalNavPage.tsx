@@ -34,11 +34,12 @@ export const ExternalNavPage: React.FC = () => {
             <ExternalLink className="h-4 w-4" />
             <span>第三方导航</span>
           </div>
-          <h1 className="text-3xl font-bold leading-tight tracking-tight">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
             外部工具与看板导航
           </h1>
           <p className="max-w-2xl text-sm text-muted-foreground">
-            这些链接会在新标签页打开，保持当前 StockWeb 布局可用。请根据需求选择对应工具。
+            这些链接会在新标签页打开，保持当前 StockWeb
+            布局可用。请根据需求选择对应工具。
           </p>
         </div>
 

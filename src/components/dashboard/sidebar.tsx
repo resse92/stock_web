@@ -53,7 +53,7 @@ export function DashboardSidebar({
   const [favoritesOpen, setFavoritesOpen] = useState(true)
 
   return (
-    <Sidebar className="lg:border-r-0!" collapsible="offcanvas" {...props}>
+    <Sidebar className="lg:!border-r-0" collapsible="offcanvas" {...props}>
       <SidebarHeader className="pb-0">
         <div className="px-2 py-3">
           <div className="flex items-center justify-between">
@@ -64,7 +64,7 @@ export function DashboardSidebar({
                   className="flex items-center justify-between gap-3 h-auto p-0 hover:bg-transparent w-full"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="size-6 bg-linear-to-br from-purple-500 to-pink-600 rounded-sm shadow flex items-center justify-center text-white text-xs font-semibold">
+                    <div className="size-6 rounded-sm bg-primary text-primary-foreground shadow flex items-center justify-center text-xs font-semibold">
                       SU
                     </div>
                     <span className="font-semibold">Square UI</span>
@@ -82,7 +82,7 @@ export function DashboardSidebar({
               <DropdownMenuContent className="w-56" align="start">
                 <DropdownMenuItem>
                   <div className="flex items-center gap-3 w-full">
-                    <div className="size-6 bg-linear-to-br from-purple-500 to-pink-600 rounded-sm shadow flex items-center justify-center text-white text-xs font-semibold">
+                    <div className="size-6 rounded-sm bg-primary text-primary-foreground shadow flex items-center justify-center text-xs font-semibold">
                       SU
                     </div>
                     <span className="font-semibold">Square UI</span>
@@ -91,7 +91,7 @@ export function DashboardSidebar({
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <div className="flex items-center gap-3 w-full">
-                    <div className="size-6 bg-linear-to-br from-blue-500 to-cyan-600 rounded-sm shadow flex items-center justify-center text-white text-xs font-semibold">
+                    <div className="size-6 rounded-sm bg-secondary text-secondary-foreground shadow flex items-center justify-center text-xs font-semibold">
                       CI
                     </div>
                     <span>Circle</span>
@@ -99,7 +99,7 @@ export function DashboardSidebar({
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <div className="flex items-center gap-3 w-full">
-                    <div className="size-6 bg-linear-to-br from-orange-500 to-red-600 rounded-sm shadow flex items-center justify-center text-white text-xs font-semibold">
+                    <div className="size-6 rounded-sm bg-secondary text-secondary-foreground shadow flex items-center justify-center text-xs font-semibold">
                       LN
                     </div>
                     <span>lndev-ui</span>

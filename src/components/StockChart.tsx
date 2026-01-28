@@ -43,7 +43,7 @@ export const StockChart = ({
   }) => {
     if (active && payload && payload.length && label) {
       return (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 shadow-lg">
+        <div className="rounded-lg border border-border bg-popover p-3 text-popover-foreground shadow-lg">
           <p className="text-sm font-medium">{formatDate(label)}</p>
           <p className="text-sm text-primary">
             Price: {formatPrice(payload[0].value)}

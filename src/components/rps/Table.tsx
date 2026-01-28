@@ -249,7 +249,7 @@ export const RPSTable: React.FC<RPSTableProps> = ({
     return (
       <Card className="w-full">
         <CardContent className="p-8">
-          <div className="flex items-center justify-center text-red-600">
+          <div className="flex items-center justify-center text-destructive">
             <span>{error}</span>
           </div>
         </CardContent>
@@ -300,7 +300,7 @@ export const RPSTable: React.FC<RPSTableProps> = ({
         }}
         modal
       >
-        <DialogContent className="sm:max-w-md bg-white">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>
               {conceptDetail?.name}（{conceptDetail?.code}）

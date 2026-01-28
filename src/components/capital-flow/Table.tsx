@@ -374,7 +374,7 @@ export const CapitalFlowTable: React.FC<CapitalFlowTableProps> = ({
     return (
       <Card className="w-full">
         <CardContent className="p-8">
-          <div className="flex items-center justify-center text-red-600">
+          <div className="flex items-center justify-center text-destructive">
             <span>{error}</span>
           </div>
         </CardContent>

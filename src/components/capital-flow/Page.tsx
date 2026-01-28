@@ -151,22 +151,26 @@ export const CapitalFlowPage: React.FC = () => {
   }, [fetchCapitalFlowData, hasMore, lastFilters, loading, loadingMore])
 
   return (
-    <div className="h-screen overflow-hidden bg-background">
-      <main className="container mx-auto px-4 py-4 h-full flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between mb-4 shrink-0">
-          <h2 className="text-3xl font-bold tracking-tight">资金流向</h2>
+    <div className="min-h-svh bg-background">
+      <main className="container mx-auto flex min-h-svh h-svh flex-col gap-4 px-4 py-4 overflow-hidden">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            资金流向
+          </h2>
 
           <CapitalFlowFilters onFiltersChange={handleFiltersChange} />
         </div>
 
-        <CapitalFlowTable
-          data={capitalFlowData}
-          loading={loading}
-          loadingMore={loadingMore}
-          error={error}
-          hasMore={hasMore}
-          onLoadMore={handleLoadMore}
-        />
+        <div className="flex-1 min-h-0">
+          <CapitalFlowTable
+            data={capitalFlowData}
+            loading={loading}
+            loadingMore={loadingMore}
+            error={error}
+            hasMore={hasMore}
+            onLoadMore={handleLoadMore}
+          />
+        </div>
       </main>
     </div>
   )

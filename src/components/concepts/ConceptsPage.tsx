@@ -167,13 +167,15 @@ export const ConceptsPage = () => {
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-background">
-      <main className="container mx-auto px-4 py-4 h-full flex flex-col gap-4">
+    <div className="min-h-svh bg-background">
+      <main className="container mx-auto flex min-h-svh flex-col gap-4 px-4 py-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Layers className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-3xl font-bold leading-tight">A股概念库</h1>
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                A股概念库
+              </h1>
             </div>
           </div>
           <Button

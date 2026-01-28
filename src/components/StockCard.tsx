@@ -20,7 +20,7 @@ export const StockCard = ({ stock }: StockCardProps) => {
           </div>
           <div
             className={`flex items-center space-x-1 text-sm font-medium ${
-              isPositive ? 'text-green-600' : 'text-red-600'
+              isPositive ? 'text-primary' : 'text-destructive'
             }`}
           >
             {isPositive ? (
@@ -43,7 +43,7 @@ export const StockCard = ({ stock }: StockCardProps) => {
             </span>
             <span
               className={`text-sm font-medium ${
-                isPositive ? 'text-green-600' : 'text-red-600'
+                isPositive ? 'text-primary' : 'text-destructive'
               }`}
             >
               {isPositive ? '+' : ''}

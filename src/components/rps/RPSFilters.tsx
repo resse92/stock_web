@@ -166,12 +166,14 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
           </PopoverTrigger>
           <PopoverContent className="w-64">
             <div className="space-y-3">
-              <div className="text-sm font-medium text-gray-700">设置范围</div>
+              <div className="text-sm font-medium text-foreground">
+                设置范围
+              </div>
               <div className="flex items-center space-x-3">
                 <div className="flex-1">
                   <Label
                     htmlFor={`${rpsType}-min`}
-                    className="text-xs text-gray-600"
+                    className="text-xs text-muted-foreground"
                   >
                     最小值
                   </Label>
@@ -191,7 +193,7 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
                 <div className="flex-1">
                   <Label
                     htmlFor={`${rpsType}-max`}
-                    className="text-xs text-gray-600"
+                    className="text-xs text-muted-foreground"
                   >
                     最大值
                   </Label>
@@ -211,12 +213,12 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
               </div>
 
               {error && (
-                <div className="text-xs text-red-500 bg-red-50 p-2 rounded">
+                <div className="text-xs text-destructive bg-destructive/10 p-2 rounded">
                   {error}
                 </div>
               )}
 
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-muted-foreground">
                 范围: 0-100，最大值需大于最小值
               </div>
 
@@ -285,7 +287,7 @@ const RPSFilters: React.FC<RPSFiltersProps> = ({ onFiltersChange }) => {
           </Button>
         </SheetTrigger>
 
-        <SheetContent side="right" className="sm:max-w-xl bg-white">
+        <SheetContent side="right" className="sm:max-w-xl">
           <SheetHeader>
             <SheetTitle>RPS 筛选条件</SheetTitle>
           </SheetHeader>

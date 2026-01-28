@@ -19,29 +19,20 @@ import {
 } from 'recharts'
 import { useDashboardStore } from '@/stores/dashboard/dashboard-store'
 
-// Couleurs exactes du design Figma
-const NEW_LEADS_COLOR_LIGHT = '#252C2C'
-const NEW_LEADS_COLOR_DARK = '#E8E9ED' // Gris clair pour dark mode
-const REPLIED_COLOR = '#888DF9'
-
-// Couleurs pour les labels selon le thème
-const LABEL_COLOR_LIGHT = '#95979d'
-const LABEL_COLOR_DARK = '#B4B4B4' // Gris clair pour dark mode
-
-// Couleurs pour la grille selon le thème
-const GRID_COLOR_LIGHT = '#E8E9ED'
-const GRID_COLOR_DARK = '#2A2A2A'
+const NEW_LEADS_COLOR = 'hsl(var(--foreground))'
+const REPLIED_COLOR = 'hsl(var(--primary))'
+const LABEL_COLOR = 'hsl(var(--muted-foreground))'
+const GRID_COLOR = 'hsl(var(--border))'
 
 export function ChartCard() {
   const { chartData } = useDashboardStore()
   const [open, setOpen] = useState(false)
   const [date, setDate] = useState<Date | undefined>(undefined)
 
-  // Use light theme for now
-  const isDark = false
-  const newLeadsColor = isDark ? NEW_LEADS_COLOR_DARK : NEW_LEADS_COLOR_LIGHT
-  const labelColor = isDark ? LABEL_COLOR_DARK : LABEL_COLOR_LIGHT
-  const gridColor = isDark ? GRID_COLOR_DARK : GRID_COLOR_LIGHT
+  const newLeadsColor = NEW_LEADS_COLOR
+  const repliedColor = REPLIED_COLOR
+  const labelColor = LABEL_COLOR
+  const gridColor = GRID_COLOR
 
   const formatDateRange = (date: Date | undefined) => {
     if (!date) return 'November'
@@ -97,7 +88,7 @@ export function ChartCard() {
         <div className="flex items-center gap-1.5">
           <div
             className="size-3 rounded-full"
-            style={{ backgroundColor: REPLIED_COLOR }}
+            style={{ backgroundColor: repliedColor }}
           />
           <span className="text-xs font-medium text-muted-foreground tracking-[-0.24px]">
             Replied
@@ -154,15 +145,6 @@ export function ChartCard() {
               width={40}
             />
             <Tooltip
-              contentStyle={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                boxShadow: 'none',
-                padding: 0,
-              }}
-              wrapperStyle={{
-                outline: 'none',
-              }}
               content={({
                 active,
                 payload,
@@ -196,12 +178,12 @@ export function ChartCard() {
                       <div className="flex items-center gap-1.5">
                         <div
                           className="size-2.5 rounded-full"
-                          style={{ backgroundColor: REPLIED_COLOR }}
+                          style={{ backgroundColor: repliedColor }}
                         />
                         <span className="flex-1 text-xs font-medium text-foreground tracking-[-0.24px]">
                           {repliedEntry.value}
                         </span>
-                        <span className="text-xs font-medium text-[#888df9] tracking-[-0.24px]">
+                        <span className="text-xs font-medium text-primary tracking-[-0.24px]">
                           +67
                         </span>
                       </div>
@@ -218,7 +200,7 @@ export function ChartCard() {
             />
             <Bar
               dataKey="replied"
-              fill={REPLIED_COLOR}
+              fill={repliedColor}
               radius={[4.912, 4.912, 0, 0]}
               barSize={30}
             />
