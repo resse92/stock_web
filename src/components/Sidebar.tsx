@@ -43,16 +43,16 @@ const CollapseButton = () => {
   return (
     <Button
       variant="outline"
-      size="sm"
-      className="w-full justify-center gap-2 hover:bg-muted"
+      size="icon"
+      className="mx-auto hover:bg-muted"
       onClick={toggleSidebar}
+      aria-label={collapsed ? '展开侧边栏' : '收起侧边栏'}
     >
       {collapsed ? (
         <ChevronRight className="h-4 w-4" />
       ) : (
         <ChevronLeft className="h-4 w-4" />
       )}
-      {!collapsed && <span>收起侧边栏</span>}
     </Button>
   )
 }
@@ -79,7 +79,7 @@ export const Sidebar = () => {
             <img
               src="/logo.svg"
               alt="StockWeb Logo"
-              className="w-10 shrink-0 rounded-md bg-primary/10 p-2 aspect-square object-contain"
+              className="w-8 shrink-0 rounded-md bg-primary/10 p-1.5 aspect-square object-contain"
               style={{ aspectRatio: '1 / 1' }}
             />
             {!collapsed && (
