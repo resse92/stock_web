@@ -23,8 +23,8 @@ RUN pnpm run build
 # 清理缓存和依赖
 RUN pnpm store prune && rm -rf node_modules
 
-# 生产阶段 - 使用Nginx提供静态文件
-FROM nginx:alpine AS production
+# 生产阶段 - 使用 Nginx 1.29.5 提供静态文件
+FROM nginx:1.29.5-alpine AS production
 
 # 复制构建产物到nginx目录
 COPY --from=builder /app/dist /usr/share/nginx/html
